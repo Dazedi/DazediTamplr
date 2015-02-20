@@ -55,7 +55,7 @@ router.get('/helloworld', function(req, res, next) {
 /* GET statusUpdate */
 router.get('/statusUpdate', function(req, res, next) {
   models.Post.findAll().then(function(posts) {
-    res.render('index', {
+    res.render('statusUpdate', {
       host: req.headers.host,
       posts: posts
     });
