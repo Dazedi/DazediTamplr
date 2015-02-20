@@ -53,10 +53,11 @@ router.get('/helloworld', function(req, res, next) {
 });
 
 /* GET statusUpdate */
-router.get('/statusUpdate', function(req, res, next) {
+router.get('/statusUpdate', function(req, res) {
   models.Post.findAll().then(function(posts) {
     res.render('statusUpdate', {
       host: req.headers.host,
+      title: 'Stuff',
       posts: posts
     });
   });
