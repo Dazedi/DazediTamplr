@@ -62,7 +62,7 @@ router.get('/statusUpdate', function(req, res, next) {
   });
 });
 
-/*
+
 router.get('/userlist', function(req, res, next) {
   models.User.findAll({
   	include: [models.Post]
@@ -73,7 +73,7 @@ router.get('/userlist', function(req, res, next) {
       users: users
     });
   });
-});*/
+});
 /*
 router.get('/statusUpdate', function(req, res, next) {
   	var db = req.db;
