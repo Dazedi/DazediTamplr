@@ -62,10 +62,10 @@ router.get('/statusUpdate', function(req, res, next) {
   });
 });
 
-
-router.get('/userlist', function(req, res, next) {
+/*
+router.get('/userlist', function(req, res) {
   models.User.findAll({
-  	include: [models.Post]
+  	include: [ models.Post ]
   }).then(function(users) {
     res.render('userlist', {
       //host: req.headers.host,
@@ -73,7 +73,7 @@ router.get('/userlist', function(req, res, next) {
       users: users
     });
   });
-});
+});*/
 /*
 router.get('/statusUpdate', function(req, res, next) {
   	var db = req.db;
