@@ -9,9 +9,8 @@ Web-ohjelmoinnin harjoitustyö keväällä 2015.
 
 Tekijät:
 
-* Ryhmä X
-    * Yyy Yyy, NNNNNN
-    * Zzz Zzz, NNNNNN
+* Ryhmä 420blazeit
+    * Tommi Vepsä, 229427
 
 
 Tämä harjoitustyö on ajossa Herokussa osoitteessa:
