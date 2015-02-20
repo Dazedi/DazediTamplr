@@ -4,12 +4,7 @@ var router = express.Router();
 var models = require('../models');
 
 router.get('/', function(req, res, next) {
-  models.User.findAll().then(function(users) {
-    res.render('index', {
-      host: req.headers.host,
-      users: users
-    });
-  });
+  res.render('index', { title: 'Index' });
 });
 
 /* GET cattax */
@@ -78,6 +73,7 @@ router.get('/statusUpdate', function(req, res, next) {
 });
 */
 /* POST to add new posts */
+
 /*
 router.post('/addpost', function(req, res) {
 	var db = req.db;
@@ -108,6 +104,15 @@ router.get('/userlist', function(req, res, next) {
 		});
 	});
 });*/
+
+router.get('/userlist', function(req, res, next) {
+  models.User.findAll().then(function(users) {
+    res.render('userlist', {
+      host: req.headers.host,
+      users: users
+    });
+  });
+});
 
 /* GET New User page. */
 /*
