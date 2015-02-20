@@ -2,5 +2,23 @@ doctype html
 html(lang="en")
   head
     title Tamplr
+    link(href='http://fonts.googleapis.com/css?family=Bree+Serif', rel='stylesheet', type='text/css')
+    link(href='/stylesheets/style.css', rel='stylesheet')
   body
     h1.tamplr-logo tamplr
+    p Tamplr:ssa on #{users.length} käyttäjää.
+    ul
+    - for(var i=0; i < users.length; i++)
+      - var u = users[i]; 
+      li
+        a(href="/api/user/#{u.username}")= u.username
+    - }
+    p.
+      Voit lisätä uuden käyttäjän seuraavanlaisella
+      a(href="http://curl.haxx.se/") curl -komennolla:
+    pre. 
+      curl -X POST http://#{host}/api/user -H 'Content-Type: application/json' -d '{"username": "teemu"}'
+    p.
+      Windowsissa pitää käyttää vähän ylimääräisiä kenoviivoja:
+    pre. 
+      curl -X POST http://#{host}/api/user -H 'Content-Type: application/json' -d '{\"username\": \"teemu\"}'
