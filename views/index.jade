@@ -8,10 +8,10 @@ html(lang="en")
     h1.tamplr-logo tamplr
     p Tamplr:ssa on #{users.length} käyttäjää.
     ul
-    - for(var i=0; i<users.length; i++)
+    - for(var i=0; i < users.length; i++)
       - var u = users[i]; 
       li
-        a(href="/api/user/#{u.username}">
+        a(href="/api/user/#{u.username}")
           #{u.username}
     - }
     p.
