@@ -1,35 +1,5 @@
-# Tamplr
-
-Web-ohjelmoinnin harjoitustyö keväällä 2015.
-
-[Harjoitustyön tehtävänanto on täällä](http://www.cs.tut.fi/~seitti/2015/harjoitustyot/tamplr.html).
-
-
-## Harjoitustyö
-
-Tekijät:
-
-* Ryhmä 420blazeit
-    * Tommi Vepsä, 229427
-
-
-Tämä harjoitustyö on ajossa Herokussa osoitteessa:
-
-http://xxx.herokuapp.com
-
-
-## Kysyttävää?
-
-Paras tapa harjoitustyöhön liittyvien kysymysten esittämiseen on
-[luoda uusi issue harjoitustyöpohjan repositorioon](https://gitlab.rd.tut.fi/tie-23500_2014-2015/template_project/issues)
-(tai kommentoida olemassaolevaa).
-Kurssihenkilökunta seurailee tätä ja vastailee kysymyksiin.
-
-
-Jos esimerkiksi kehitysympäristön asentamisessa on ongelmia, tehtävänannossa epäselvyyksiä tai mitä tahansa muuta harjoitustyöhön liittyvää, kysymykset ovat tervetulleita.
-Myös tyhmät kysymykset on sallittuja.
-Samoin muiden kysymyksiin vastaaminen.
-
+# MY PRIVATE WEBSITE (works as a portfolio etc)
+Below extra information on how I can do stuff
 
 ## Sovelluksen käynnistys
 
@@ -39,9 +9,6 @@ Sovellus käynnistyy osoitteeseen http://localhost:3000 suorittamalla
 npm install
 PORT=3000 npm start
 ```
-
-[Lisää ohjeita kehitysympäristön pystytykseen, sovelluksen suorittamiseen ja Herokussa julkaisuun täällä.](http://www.cs.tut.fi/~seitti/2015/harjoitustyot/pystytys.html)
-
 
 ## Repositorion sisältö
 
