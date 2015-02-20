@@ -61,6 +61,19 @@ router.get('/statusUpdate', function(req, res, next) {
     });
   });
 });
+
+/*
+router.get('/userlist', function(req, res, next) {
+  models.User.findAll({
+  	include: [models.Post]
+  }).then(function(users) {
+    res.render('userlist', {
+      //host: req.headers.host,
+      title: 'User List'
+      users: users
+    });
+  });
+});*/
 /*
 router.get('/statusUpdate', function(req, res, next) {
   	var db = req.db;
@@ -104,18 +117,6 @@ router.get('/userlist', function(req, res, next) {
 		});
 	});
 });*/
-
-router.get('/userlist', function(req, res, next) {
-  models.User.findAll({
-  	include: [models.Post]
-  }).then(function(users) {
-    res.render('userlist', {
-      //host: req.headers.host,
-      title: 'User List'
-      users: users
-    });
-  });
-});
 
 /* GET New User page. */
 /*
