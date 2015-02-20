@@ -58,6 +58,14 @@ router.get('/helloworld', function(req, res, next) {
 });
 
 /* GET statusUpdate */
+router.get('/statusUpdate', function(req, res, next) {
+  models.Post.findAll().then(function(posts) {
+    res.render('index', {
+      host: req.headers.host,
+      posts: posts
+    });
+  });
+});
 /*
 router.get('/statusUpdate', function(req, res, next) {
   	var db = req.db;
