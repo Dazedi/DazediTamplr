@@ -63,6 +63,23 @@ router.get('/statusUpdate', function(req, res, next) {
 });
 
 /*
+router.post('/addpost', function(req, res) {
+	var db = req.db;
+	var update = req.body.update;
+	var collection = db.get('postcollection');
+	collection.insert({
+		"update" : update
+	}, function(err, doc) {
+		if(err) {
+			res.send("There was a problem adding post to database");
+		} else {
+			res.location("statusUpdate");
+			res.redirect("statusUpdate");
+		}
+	});
+});*/
+
+/*
 router.get('/userlist', function(req, res) {
   models.User.findAll({
   	include: [ models.Post ]
