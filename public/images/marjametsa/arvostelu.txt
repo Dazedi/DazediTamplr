@@ -1,0 +1,26 @@
+
+Ohjelmistojen suunnittelu - Harjoitustyön arvostelu
+Ryhmä 25
+---------------------------------------------------
+Harjoitustyö on rakenteellisesti todella hyvin toteutettu. MVC:n komponenttien vastuunjako on toimiva
+ja komponenttien välille tehdyt rajapinnat on oikeaoppinen ratkaisu. Riippuvuuksien injektointi komponenteille
+on tehty mallikkaasti. Tallentamisen ja lataamisen eriyttäminen on myös hyvä ratkaisu, samoin kuin 
+ModelDataInterfacen luominen tähän väliin. Samaa ajatusta seuraten, myös mallin ja AI:n välille olisi
+myös voinut tehdä oman rajapintansa.
+
+Otusten, esineiden ja ruutujen automaattinen rekisteröiminen tehtaille, kuten tehtaiden muukin toteutus oli
+toimivaa. 
+
+Const-jäsenfunktioita oli käytetty pääsääntöisesti hyvin, vaikkakin ainakin creaturesta oli jäänyt muutama
+uupumaan.
+
+Peli toimi hienosti ja eri tiereille kuuluvat eläimet ja esineet olivat hieno idea, samaten ystävällismielisyys
+tiettyjen eläinten välillä (tai pelokkuus, eihän saatanan kimppuun uskalla hyökätä).
+
+Koodi oli siistiä ja helposti luettavaa, sekä rajapintaluokat olivat hyvin kommentoidut. Työn dokumentaatio oli
+kattava ja luokkakaavio hyvin selkeä.
+
+
+Pisteet 10/9 - palautuksen myöhästyminen 1,5p. => 8,5/9
+
+Koko harjoitustyö 14,5/15

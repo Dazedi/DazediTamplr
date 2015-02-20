@@ -1,0 +1,18 @@
+doctype html
+html(lang="en")
+  include head.jade
+  body
+    include nav.jade
+    
+    .favourites
+      .container
+        h2 Contact information
+        .row.text-justify
+          .col-md-12
+            address
+              strong Tommi Vepsä <br>
+              | Hopefully soon-to-be bachelor of science in information technology<br>
+              | Current secretary of ESN INTO Tampere <br>
+              a(href='mailto:vepsa.tommi@gmail.com') vepsa.tommi@gmail.com
+
+    include disclaimer.jade

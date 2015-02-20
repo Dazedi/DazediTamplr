@@ -1,0 +1,29 @@
+doctype html
+html(lang="en")
+  include head.jade
+  body
+    include nav.jade
+    script(src='/javascripts/marjametsa.js')
+
+    .favourites
+      .container
+        h2 Marjametsa the Dark Descent
+        p <i>A 2D Turn-based game - Retrieve the lost relic or kill the Devil</i>
+        .row.text-justify
+          .col-md-5
+            p
+              Along my studies there has been several different kind of exercises and projects I've had to work on. This one was by far the biggest hurdle. I worked on this game with Sami Jokela (<a href="http://www.redcored.com">www.redcored.com</a>) and it was a pleasure working with him on this. I believe I've learned the most during my studies so far just from this.<br><br> The main point of this exercise was to plan and write a reasonably sized program. Implementing the principles of SOLID and proper design patterns was a big part of this. In this game we used the MVC because it was the best approach in this case. We practised designing proper interfaces between the components. The user interface was made with Qt.<br><br> For some parts (i.e. saving, loading, making the game as extensible as possible, procedural map generation...) we used factories to create the smaller elements of the game (squares, creatures, items...) and another factory to compile usable templates and finally a map builder will put everything together, a singleton to save our graphics and we practised making a separate library for all the file reading and writing when saving and loading.<br><br><a href="/images/marjametsa/KirjallinenDokumentaatio.pdf">Here's a link to the written documentation on the project (only in Finnish)</a>
+            hr(style="background:#cccccc; border:0; height:1px")
+            h4 Image description
+            p#imgdesc 
+              This is the game window. Pretty simple user interface, all of the buttons can also be accessed by using shortcuts. On hovering over the buttons a tooltip appears which states the shortcut button. Inside the drawing area you can see the spawn location. Four random generated lowest tier items spawn next to the spawn location, from which the player can choose one. Upon picking an item, the rest will disappear. The door will lead outside where the actual action happens. The player can end his turn at any point by clicking the end turn button. The player can also save or load the game at any point of the game. The savefile is a simple .txt file.
+          .col-md-7
+            .project-thumbnails
+              - var ids = ['spawn', 'pickup', 'house', 'activate', 'inspect', 'dmg', 'kill', 'rks', 'relic', 'satan', 'hell', 'running', 'follow', 'teleport', 'eek', 'victory', 'creature', 'item', 'square', 'template']
+              each val in ids
+                - var link = '/images/marjametsa/' + val + '.png'
+                a(href='#') <img class='imgthumbnail' id='#{val}' src='#{link}'
+            .project-image
+              hr(style="background:#cccccc; border:0; height:1px; margin-bottom:4px; margin-top:4px")
+              img#imgdisplay(src='/images/marjametsa/spawn.png')
+    include disclaimer.jade
