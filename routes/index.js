@@ -106,16 +106,19 @@ router.get('/userlist', function(req, res, next) {
 });*/
 
 router.get('/userlist', function(req, res, next) {
-  models.User.findAll().then(function(users) {
+  models.User.findAll({
+  	include: [models.Post]
+  }).then(function(users) {
     res.render('userlist', {
-      host: req.headers.host,
+      //host: req.headers.host,
+      title: 'User List'
       users: users
     });
   });
 });
 
 /* GET New User page. */
-/*
+
 router.get('/newuser', function(req, res) {
     res.render('newuser', { title: 'Add New User' });
 });
@@ -136,6 +139,6 @@ router.post('/adduser', function(req, res){
 			res.redirect("userlist");
 		}
 	});
-});*/
+});
 
 module.exports = router;

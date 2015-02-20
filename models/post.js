@@ -1,12 +1,12 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-  var User = sequelize.define("User", {
-    username: DataTypes.STRING
+  var Post = sequelize.define("Post", {
+    text: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {
-        User.hasMany(models.Post)
+        Post.belongsTo(models.User)
         // Tässä voi assosioida malleja toisiinsa
         // http://sequelize.readthedocs.org/en/latest/docs/associations/
         //
@@ -16,5 +16,5 @@ module.exports = function(sequelize, DataTypes) {
     }
   });
 
-  return User;
+  return Post;
 };
