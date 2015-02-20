@@ -118,7 +118,7 @@ router.get('/userlist', function(req, res, next) {
 });
 
 /* GET New User page. */
-
+/*
 router.get('/newuser', function(req, res) {
     res.render('newuser', { title: 'Add New User' });
 });
@@ -139,6 +139,6 @@ router.post('/adduser', function(req, res){
 			res.redirect("userlist");
 		}
 	});
-});
+});*/
 
 module.exports = router;
