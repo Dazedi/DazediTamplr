@@ -8,7 +8,7 @@ router.get('/', function(req, res) {
   	include: [ models.Post ]
   }).then(function(users) {
     res.render('index', {
-      //host: req.headers.host,
+      host: req.headers.host,
       title: 'INDEX',
       users: users
     });
