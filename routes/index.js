@@ -54,13 +54,13 @@ router.get('/helloworld', function(req, res, next) {
 
 /* GET statusUpdate */
 router.get('/statusUpdate', function(req, res) {
-  models.Post.findAll({
-  	include: [ models.User ]
-  }).then(function(posts) {
+  models.User.findAll({
+  	include: [ models.Post ]
+  }).then(function(users) {
     res.render('statusUpdate', {
       //host: req.headers.host,
       title: 'Stuff',
-      posts: posts
+      users: users
     });
   });
 });
