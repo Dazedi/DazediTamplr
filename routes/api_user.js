@@ -18,18 +18,21 @@ router.post('/', function(req, res, next) {
   } else if (!password) {
     return res.status(400).json({error: 'InvalidPassword'});
   }
-  //models.User.findOne({where:{username: username}};).then(function(){
-  //  return res.status(409).json({error: 'Username already exists'});
-  //});
-  models.User.create({
-    username: username,
-    realname: realname,
-    password: password
-  }).then(function(user) {
-    return res.status(201).json(user);
-  },
-  function(err) {
-    return res.status(500).json({error: 'ServerError'});
+  models.User.findOne({where:{username: username}};).then(function(user){
+    if(user) {
+      return res.status(409).json({error: 'Username already exists'});
+    } else {
+      models.User.create({
+        username: username,
+        realname: realname,
+        password: password
+      }).then(function(user) {
+        return res.status(201).json(user);
+      },
+      function(err) {
+        return res.status(500).json({error: 'ServerError'});
+      });
+    } 
   });
 });
 
