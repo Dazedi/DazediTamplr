@@ -12,8 +12,8 @@ router.post('/', function(req, res, next) {
   } 
   models.Blog.create({ 
     name: name 
-  }).complete(function(user) {
-    return res.status(201).json(user.id);
+  }).complete(function(err, result) {
+    return res.status(201).json(result.id);
     //return res.status(201).json(user.id);
   });
 });
