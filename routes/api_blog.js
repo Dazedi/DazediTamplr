@@ -11,7 +11,7 @@ router.post('/', function(req, res, next) {
     return res.status(400).json({error: 'InvalidName'});
   } 
   models.Blog.create({ 
-    username: username 
+    name: name 
   }).then(function(user) {
     return res.status(201).json(user.id);
   });
