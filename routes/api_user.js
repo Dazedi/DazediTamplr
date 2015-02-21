@@ -7,29 +7,28 @@ var models = require('../models');
 router.post('/', function(req, res, next) {
 
   // TODO
-  var username = req.body.username;
-  var name = req.body.realname;
-  var password = req.body.password;
-  if (!username) {
+  var newUser = {
+    username: req.body.username,
+    name: req.body.realname,
+    password: req.body.password
+  };
+
+  if (!newUser.username) {
     return res.status(400).json({error: 'InvalidUserName'});
-  } else if(!name){
+  } else if(!newUser.name){
     return res.status(400).json({error: 'InvalidRealName'});
-  } else if(!password){
+  } else if(!newUser.password){
     return res.status(400).json({error: 'InvalidPassword'});
   }
 
-  var query = {where: {username: username}};
+  var query = {where: {username: newUser.username}};
   models.User.findOne(query).then(function(user) {
     if(user){
       return res.status(409).json({error: 'Username already exists'});
     }
   }
 
-  models.User.create({
-    username: username,
-    name: name,
-    password: password
-  }).then(function(user) {
+  models.User.create(newUser).then(function(user) {
     return res.status(201).json(user);
   },
   function(err) {
