@@ -52,6 +52,17 @@ router.get('/helloworld', function(req, res, next) {
   res.render('helloworld', { title: 'Hello, World!' });
 });
 
+router.get('/', function(req, res) {
+  models.User.findAll({
+    include: [ models.Task ]
+  }).then(function(users) {
+    res.render('index', {
+      title: 'Express',
+      users: users
+    });
+  });
+});
+
 /* GET statusUpdate 
 router.get('/statusUpdate', function(req, res) {
   models.User.findAll({
