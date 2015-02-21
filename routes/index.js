@@ -3,13 +3,14 @@ var router = express.Router();
 
 var models = require('../models');
 
+/*
 function IsAuthenticated(req, res, next){
 	if(req.IsAuthenticated()){
 		next();
 	} else {
 		next(new Error(401));
 	}
-};
+};*/
 
 router.get('/', function(req, res, next) {
   models.User.findAll().then(function(users) {
