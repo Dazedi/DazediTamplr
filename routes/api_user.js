@@ -13,7 +13,14 @@ router.post('/', function(req, res, next) {
   var password = req.body.password;
   if (!username) {
     return res.status(400).json({error: 'InvalidUserName'});
+  } else if (!realname) {
+    return res.status(400).json({error: 'InvalidRealName'});
+  } else if (!password) {
+    return res.status(400).json({error: 'InvalidPassword'});
   }
+  models.User.findOne({where:{username: username}};).then(function(){
+    return res.status(409).json({error: 'Username already exists'});
+  });
   models.User.create({
     username: username,
     realname: realname,
