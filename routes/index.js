@@ -21,4 +21,13 @@ router.get('/', function(req, res, next) {
   });
 });
 
+router.get('/login', function(req, res, next) {
+  models.User.findAll().then(function(users) {
+    res.render('login', {
+      host: req.headers.host,
+      users: users
+    });
+  });
+});
+
 module.exports = router;

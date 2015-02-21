@@ -147,12 +147,7 @@ router.get('/:username/blogs', function(req, res, next) {
       return res.status(404).json({error: 'UserNotFound'});
     } else {
       models.Blog.findAll({ 
-        include: [
-          {
-            model: Author,
-            where: {username: username}
-          }
-        ]
+        include: [ Authors ]
       }).then(function(name) {
         return res.status(200).json(name);
       });
