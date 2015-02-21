@@ -18,4 +18,18 @@ router.post('/', function(req, res, next) {
   });
 });
 
+router.get('/:id', function(req, res, next) {
+  var id = req.params['id'];
+  var query = {where: {id: id}};
+  models.Blog.findOne(query).then(function(blog) {
+    if (blog) {
+      var result = { id: blog.id, name: blog.name};
+      return res.json(result);
+    }
+    else {
+      return res.status(404).json({error: 'BlogNotFound'});
+    }
+  });
+});
+
 module.exports = router;
