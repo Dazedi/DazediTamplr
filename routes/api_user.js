@@ -57,28 +57,56 @@ router.get('/:username', function(req, res, next) {
 });
 
 router.put('/:username', function(req, res, next) {
-  var query = {where: {username: req.body.username}};
+  var username = req.body.username;
   var realname = req.body.realname;
   var password = req.body.password;
   if (!realname && !password) {
     return res.status(400).json({error: 'InvalidRealName or Password'});
-  } else if(!realname) {
-    models.User.findOne(query).then(function(user) {
-      if(user) {
-        models.User.update({ password: password });
-      } else {
-        return res.status(404).json({error: 'UserNotFound'});
-      }
-    });
-  } else if(!password) {
-    models.User.findOne(query).then(function(user) {
-      if(user) {
-        models.User.update({ realname: realname });
-      } else {
-        return res.status(404).json({error: 'UserNotFound'});
-      }
-    });
   }
-});
+
+  var query = {where: {username: username}};
+  models.User.findOne(query).then(function(user){
+    if(!user) {
+      return res.status(409).json({error: 'UserNotFound'});
+    } else {
+      // Realname is empty => update password
+      if(!realname) {
+        models.User.update({
+          username: user.username,
+          realname: user.realname,
+          password: password
+        }).then(function(user) {
+          return res.status(201).json(user);
+        },
+        function(err) {
+          return res.status(500).json({error: 'ServerError'});
+        });
+      // Password is empty => update realname
+      } else if(!password) {
+        models.User.update({
+          username: user.username,
+          realname: realname,
+          password: user.password
+        }).then(function(user) {
+          return res.status(201).json(user);
+        },
+        function(err) {
+          return res.status(500).json({error: 'ServerError'});
+        });
+      // Update realname and password
+      } else {
+        models.User.update({
+          username: user.username,
+          realname: realname,
+          password: password
+        }).then(function(user) {
+          return res.status(201).json(user);
+        },
+        function(err) {
+          return res.status(500).json({error: 'ServerError'});
+        });
+      }
+    } 
+  });
 
 module.exports = router;
