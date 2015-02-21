@@ -52,7 +52,7 @@ router.get('/helloworld', function(req, res, next) {
   res.render('helloworld', { title: 'Hello, World!' });
 });
 
-/* GET statusUpdate */
+/* GET statusUpdate 
 router.get('/statusUpdate', function(req, res) {
   models.User.findAll({
   	include: [ models.Post ]
@@ -63,7 +63,7 @@ router.get('/statusUpdate', function(req, res) {
       users: users
     });
   });
-});
+});*/
 
 /*
 router.post('/addpost', function(req, res) {
