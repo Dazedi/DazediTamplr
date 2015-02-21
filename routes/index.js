@@ -52,12 +52,13 @@ router.get('/helloworld', function(req, res, next) {
   res.render('helloworld', { title: 'Hello, World!' });
 });
 
-router.get('/', function(req, res) {
+router.get('/statusUpdate', function(req, res) {
   models.User.findAll({
-    include: [ models.Task ]
+  	include: [ models.Post ]
   }).then(function(users) {
-    res.render('index', {
-      title: 'Express',
+    res.render('statusUpdate', {
+      //host: req.headers.host,
+      title: 'Stuff',
       users: users
     });
   });
