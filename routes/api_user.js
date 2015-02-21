@@ -3,6 +3,12 @@ var router = express.Router();
 
 var models = require('../models');
 
+// Create new user
+// ---------------
+// Works also with:
+// curl -X POST http://myappv2.herokuapp.com/api/user
+// -H 'Content-Type: application/json' 
+// -d '{"username": "username", "realname": "realname", "password": "pw"}'
 
 router.post('/', function(req, res, next) {
 
@@ -38,6 +44,12 @@ router.post('/', function(req, res, next) {
   });
 });
 
+// Get user information
+// --------------------
+// Works also with:
+// curl -X GET http://myappv2.herokuapp.com/api/user/:username
+// prints out as:
+// {"username": "username", "realname": "realname"}
 
 router.get('/:username', function(req, res, next) {
 
@@ -55,6 +67,12 @@ router.get('/:username', function(req, res, next) {
     }
   });
 });
+
+// Update user information
+// -----------------------
+// Works also with:
+// curl -X PUT http://myappv2.herokuapp.com/api/user/:username
+// -H 'Content-Type: application/json' -d '{"varName": "newValue"}'
 
 router.put('/:username', function(req, res, next) {
   var username = req.params['username'];
@@ -98,6 +116,11 @@ router.put('/:username', function(req, res, next) {
   });
 });
 
+// Delete user
+// -----------
+// Works also with:
+// curl -X DELETE http://myappv2.herokuapp.com/api/user/:username
+
 router.delete('/:username', function(req, res, next) {
   var username = req.params['username'];
   var query = {where: {username: username}};
@@ -107,7 +130,7 @@ router.delete('/:username', function(req, res, next) {
     }
     else {
       models.User.destroy(query).then(function () {
-        return res.status(200);
+        return res.status(200).json(user);
       },
       function(err) {
         return res.status(500).json({error: 'ServerError'});
