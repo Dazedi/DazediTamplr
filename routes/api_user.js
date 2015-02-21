@@ -57,7 +57,7 @@ router.get('/:username', function(req, res, next) {
 });
 
 router.put('/:username', function(req, res, next) {
-  var username = req.body.username;
+  var username = req.params['username'];
   var realname = req.body.realname;
   var password = req.body.password;
   if (!realname && !password) {
@@ -71,11 +71,7 @@ router.put('/:username', function(req, res, next) {
     } else {
       // Realname is empty => update password
       if(!realname) {
-        models.User.update({
-          username: user.username,
-          realname: user.realname,
-          password: password
-        }).then(function(user) {
+        models.User.update({ password: password },query).then(function(user) {
           return res.status(201).json(user);
         },
         function(err) {
@@ -83,11 +79,7 @@ router.put('/:username', function(req, res, next) {
         });
       // Password is empty => update realname
       } else if(!password) {
-        models.User.update({
-          username: user.username,
-          realname: realname,
-          password: user.password
-        }).then(function(user) {
+        models.User.update({ realname: realname },query).then(function(user) {
           return res.status(201).json(user);
         },
         function(err) {
@@ -95,11 +87,7 @@ router.put('/:username', function(req, res, next) {
         });
       // Update realname and password
       } else {
-        models.User.update({
-          username: user.username,
-          realname: realname,
-          password: password
-        }).then(function(user) {
+        models.User.update({ realname: realname, password: password },query).then(function(user) {
           return res.status(201).json(user);
         },
         function(err) {
