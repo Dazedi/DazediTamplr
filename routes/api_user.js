@@ -47,7 +47,8 @@ router.get('/:username', function(req, res, next) {
   var query = {where: {username: username}};
   models.User.findOne(query).then(function(user) {
     if (user) {
-      return res.json(user);
+      var result = { username: user.username, realname: user.realname};
+      return res.json(result);
     }
     else {
       return res.status(404).json({error: 'UserNotFound'});
