@@ -56,4 +56,29 @@ router.get('/:username', function(req, res, next) {
   });
 });
 
+router.put('/:username', function(req, res, next) {
+  var query = {where: {username: req.body.username}};
+  var realname = req.body.realname;
+  var password = req.body.password;
+  if (!realname && !password) {
+    return res.status(400).json({error: 'InvalidRealName or Password'});
+  } else if(!realname) {
+    models.User.findOne(query).then(function(user) {
+      if(user) {
+        models.User.update({ password: password });
+      } else {
+        return res.status(404).json({error: 'UserNotFound'});
+      }
+    });
+  } else if(!password) {
+    models.User.findOne(query).then(function(user) {
+      if(user) {
+        models.User.update({ realname: realname });
+      } else {
+        return res.status(404).json({error: 'UserNotFound'});
+      }
+    });
+  }
+});
+
 module.exports = router;
