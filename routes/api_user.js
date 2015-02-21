@@ -149,8 +149,7 @@ router.get('/:username/blogs', function(req, res, next) {
       models.Blog.findAll({ 
         include: [ models.Author ]
       }).success(function(stuff) {
-        console.log(JSON.stringify(stuff));
-        return res.status(200).json(stuff);
+        return res.status(200).json(stuff.BlogID);
       });
     }
   });
