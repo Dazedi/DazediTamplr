@@ -13,7 +13,8 @@ router.post('/', function(req, res, next) {
   models.Blog.create({ 
     name: name 
   }).then(function(user) {
-    return res.status(201).json(user.id);
+    return res.status(201).json(user);
+    //return res.status(201).json(user.id);
   });
 });
 
