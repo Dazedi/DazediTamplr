@@ -139,4 +139,25 @@ router.delete('/:username', function(req, res, next) {
   });
 });
 
+router.get('/:username/blogs', function(req, res, next) {
+  var username = req.params['username'];
+  var query = {where: {username: username}};
+  models.User.findOne(query).then(function(user) {
+    if(!user) {
+      return res.status(404).json({error: 'UserNotFound'});
+    } else {
+      models.Blog.findAll({ 
+        include: [
+          {
+            model: Author,
+            where: {username: username}
+          }
+        ]
+      }).then(function(name) {
+        return res.status(200).json(name);
+      });
+    }
+  });
+});
+
 module.exports = router;

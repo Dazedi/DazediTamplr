@@ -35,12 +35,16 @@ router.get('/:id', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
   var id = req.params['id'];
   var query = {where: {id: id}};
-  models.Blog.findOne(query).then(function(blog) {
+  models.Blog.findOne(query, include: [models.Author]).then(function(blog) {
     if (!blog) {
       return res.status(404).json({error: 'BlogNotFound'});
     }
     else {
-      models.Blog.destroy(query).then(function () {},
+      models.Author.destroy({ where: {BlogID: blog.id}}).then(function (affectedRows){
+        blog.destroy().then(function(){
+          return res.status(200).send('OK');
+        });
+      },
       function(err) {
         return res.status(500).json({error: 'ServerError'});
       });
