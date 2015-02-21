@@ -18,7 +18,9 @@ router.post('/', function(req, res, next) {
   } else if (!password) {
     return res.status(400).json({error: 'InvalidPassword'});
   }
-  models.User.findOne({where:{username: username}};).then(function(user){
+
+  var query = {where: {username: username}};
+  models.User.findOne(query).then(function(user){
     if(user) {
       return res.status(409).json({error: 'Username already exists'});
     } else {
