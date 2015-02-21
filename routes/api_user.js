@@ -108,5 +108,6 @@ router.put('/:username', function(req, res, next) {
       }
     } 
   });
+});
 
 module.exports = router;
