@@ -35,7 +35,7 @@ router.get('/:id', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
   var id = req.params['id'];
   var query = {where: {id: id}};
-  models.Blog.findOne(query, include: [models.Author]).then(function(blog) {
+  models.Blog.findOne(query, include: [{models: Author}]).then(function(blog) {
     if (!blog) {
       return res.status(404).json({error: 'BlogNotFound'});
     }
