@@ -1,59 +1,24 @@
 doctype html
 html(lang="en")
-  include head.jade
+  head
+    title Tamplr
+    link(href='http://fonts.googleapis.com/css?family=Bree+Serif', rel='stylesheet', type='text/css')
+    link(href='/stylesheets/style.css', rel='stylesheet')
   body
-    include nav.jade
-    
-    .jumbotron
-      .container
-        h1 Dazedi's homesite
-        p.
-          Gamer since 1996 - Programmer since 2011<br/>
-          <small>Check out projects to see what I have done</small>
-        a(href='/log') Learn More
-
-    .favourites
-      .container
-        h2 Games and Languages
-        p.
-          A few games I love and hate, and a programming language
-          I've been using since I started programming.
-        .row
-          .col-xs-6.col-md-4
-            .thumbnail
-              img.double(src='/images/darksouls2.png')
-            .thumbnail
-              img.double(src='/images/LoL.png')
-          .col-xs-6.col-md-4
-            .thumbnail
-              img.double(src='/images/wot.png')
-            .thumbnail
-              img.double(src='/images/farcry4.png')
-          .col-xs-6.col-md-4
-            .thumbnail
-              img.single(src='/images/code.png')
-
-    .learn-more
-      .container
-        .row
-          .col-md-4
-            h3 CodeAcademy
-            p.
-              Incredibly useful website to kickstart your learning
-              of programming languages.
-            
-            a(href='http://www.codeacademy.com') Start learning now
-          .col-md-4
-            h3 Steam
-            p.
-              Ultimate gaming platform - communities, games, tons of content.
-            
-            a(href='http://store.steampowered.com') Join now and start gaming
-          .col-md-4
-            h3 Dunno what to put here
-            p.
-              Click the following link for fun
-            
-            a(href='/magicks') Magicks!
-
-    include disclaimer.jade
+    h1.tamplr-logo tamplr
+    p Tamplr:ssa on #{users.length} käyttäjää.
+    ul
+    - for(var i=0; i < users.length; i++){
+      - var u = users[i]; 
+      li
+        a(href="/api/user/#{u.username}")= u.username
+    - }
+    p.
+      Voit lisätä uuden käyttäjän seuraavanlaisella
+      <a href="http://curl.haxx.se/"> curl</a>-komennolla:
+    pre. 
+      curl -X POST http://#{host}/api/user -H 'Content-Type: application/json' -d '{"username": "teemu"}'
+    p.
+      Windowsissa pitää käyttää vähän ylimääräisiä kenoviivoja:
+    pre. 
+      curl -X POST http://#{host}/api/user -H 'Content-Type: application/json' -d '{\"username\": \"teemu\"}'

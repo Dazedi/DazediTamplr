@@ -2,11 +2,14 @@
 
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define("User", {
-    username: DataTypes.STRING
+    username: DataTypes.STRING,
+    name: DataTypes.STRING,
+    password: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {
-        User.hasMany(models.Post)
+        //User.hasMany(models.Post)
+        
         // Tässä voi assosioida malleja toisiinsa
         // http://sequelize.readthedocs.org/en/latest/docs/associations/
         //
