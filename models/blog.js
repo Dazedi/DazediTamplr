@@ -6,7 +6,7 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function(models) {
-        Blog.hasMany(models.Author, { as: 'Authors' });
+        Blog.hasMany(models.Author);
         Blog.belongsTo(models.User);
         //User.hasMany(models.Post)
         

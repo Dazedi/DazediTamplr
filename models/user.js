@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function(models) {
-        User.hasMany(models.Blog, { as: 'Blogs' });
+        User.hasMany(models.Blog);
         
         // Tässä voi assosioida malleja toisiinsa
         // http://sequelize.readthedocs.org/en/latest/docs/associations/
