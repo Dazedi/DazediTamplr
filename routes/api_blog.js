@@ -32,4 +32,35 @@ router.get('/:id', function(req, res, next) {
   });
 });
 
+router.delete('/:id', function(req, res, next) {
+  var id = req.params['id'];
+  var query = {where: {id: id}};
+  models.Blog.findOne(query).then(function(blog) {
+    if (!blog) {
+      return res.status(404).json({error: 'BlogNotFound'});
+    }
+    else {
+      models.Blog.destroy(query).then(function () {},
+      function(err) {
+        return res.status(500).json({error: 'ServerError'});
+      });
+    }
+  });
+});
+
+router.put('/:id/author/:username', function(req, res, next) {
+  var id = req.params['id'];
+  var username = req.params['username'];
+  var query = {where: {id: id}};
+  models.Blog.findOne(query).then( function(blog) {
+    models.Author.create({
+      username: username
+    }).then(function(username) {
+      username.setBlog(blog).then(function() {
+        return res.status(200).send('OK');
+      });
+    });
+  });
+});
+
 module.exports = router;
