@@ -30,7 +30,7 @@ router.post('/:user_id/posts/create', function (req, res) {
     where: { id: req.param('user_id') }
   }).then(function(user) {
     models.Post.create({
-      title: req.param('title')
+      update: req.param('update')
     }).then(function(title) {
       title.setUser(user).then(function() {
         res.redirect('/');
