@@ -4,7 +4,7 @@ module.exports = {
   up: function(migration, DataTypes, done) {
     migration
       .createTable('Posts', {
-        text: DataTypes.STRING
+        update: DataTypes.STRING
       })
       .complete(done)
   },
