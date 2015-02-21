@@ -6,7 +6,7 @@ router.post('/create', function(req, res) {
   models.User.create({
     username: req.param('username')
   }).then(function() {
-    res.redirect('/');
+    res.redirect('/statusUpdate');
   });
 });
 
@@ -19,7 +19,7 @@ router.get('/:user_id/destroy', function(req, res) {
       {where: {UserId: user.id}}
     ).then(function(affectedRows) {
       user.destroy().then(function() {
-        res.redirect('/');
+        res.redirect('/statusUpdate');
       });
     });
   });
@@ -33,7 +33,7 @@ router.post('/:user_id/posts/create', function (req, res) {
       update: req.param('update')
     }).then(function(title) {
       title.setUser(user).then(function() {
-        res.redirect('/');
+        res.redirect('/statusUpdate');
       });
     });
   });
@@ -48,7 +48,7 @@ router.get('/:user_id/posts/:post_id/destroy', function (req, res) {
     }).then(function(post) {
       post.setUser(null).then(function() {
         post.destroy().then(function() {
-          res.redirect('/');
+          res.redirect('/statusUpdate');
         });
       });
     });
