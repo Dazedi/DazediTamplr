@@ -72,7 +72,7 @@ router.put('/:username', function(req, res, next) {
       // Realname is empty => update password
       if(!realname) {
         models.User.update({ password: password },query).then(function(user) {
-          return res.status(201).json(user);
+          return res.status(200).json(user);
         },
         function(err) {
           return res.status(500).json({error: 'ServerError'});
@@ -80,7 +80,7 @@ router.put('/:username', function(req, res, next) {
       // Password is empty => update realname
       } else if(!password) {
         models.User.update({ realname: realname },query).then(function(user) {
-          return res.status(201).json(user);
+          return res.status(200).json(user);
         },
         function(err) {
           return res.status(500).json({error: 'ServerError'});
@@ -88,13 +88,31 @@ router.put('/:username', function(req, res, next) {
       // Update realname and password
       } else {
         models.User.update({ realname: realname, password: password },query).then(function(user) {
-          return res.status(201).json(user);
+          return res.status(200).json(user);
         },
         function(err) {
           return res.status(500).json({error: 'ServerError'});
         });
       }
     } 
+  });
+});
+
+router.delete('/:username', function(req, res, next) {
+  var username = req.params['username'];
+  var query = {where: {username: username}};
+  models.User.findOne(query).then(function(user) {
+    if (!user) {
+      return res.status(404).json({error: 'UserNotFound'});
+    }
+    else {
+      models.User.destroy(query).then(function () {
+        return res.status(200);
+      },
+      function(err) {
+        return res.status(500).json({error: 'ServerError'});
+      });
+    }
   });
 });
 
