@@ -9,11 +9,15 @@ router.post('/', function(req, res, next) {
   // TODO
 
   var username = req.body.username;
+  var realname = req.body.realname;
+  var password = req.body.password;
   if (!username) {
     return res.status(400).json({error: 'InvalidUserName'});
   }
   models.User.create({
-    username: username
+    username: username,
+    realname: realname,
+    password: password
   }).then(function(user) {
     return res.status(201).json(user);
   },
