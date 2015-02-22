@@ -35,7 +35,15 @@ router.post('/', function(req, res, next) {
         realname: realname,
         password: password
       }).then(function(user) {
-        return res.status(201).json(user);
+        models.Blog.create({
+          id: username,
+          name: name 
+        }).complete(function(err, result) {
+          createdBlog.setUser(user).then(function() {
+            return res.status(201).json(user);
+          });
+          //return res.status(201).json(user.id);
+        });
       },
       function(err) {
         return res.status(500).json({error: 'ServerError'});
@@ -72,8 +80,8 @@ router.get('/:username', function(req, res, next) {
 // -----------------------
 // Works also with:
 // curl -X PUT http://myappv2.herokuapp.com/api/user/:username
-// -H 'Content-Type: application/json' -d '{"varName": "newValue"}'
-
+// -H 'Content-Type: application/json' -d '{"varName": "newValue"}''
+// WORKS WHEN LOGGED IN AND LOGGED IN === USERNAME(need to add check later)
 router.put('/:username', function(req, res, next) {
   var username = req.params['username'];
   var realname = req.body.realname;
@@ -120,7 +128,7 @@ router.put('/:username', function(req, res, next) {
 // -----------
 // Works also with:
 // curl -X DELETE http://myappv2.herokuapp.com/api/user/:username
-
+// WORKS WHEN LOGGED IN AND LOGGED IN === USERNAME(need to add check later)
 router.delete('/:username', function(req, res, next) {
   var username = req.params['username'];
   var query = {where: {username: username}};
