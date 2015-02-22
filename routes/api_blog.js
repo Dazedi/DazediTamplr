@@ -75,4 +75,26 @@ router.put('/:id/author/:username', function(req, res, next) {
   });
 });
 
+router.get('/:id/posts', function(req, res, next) {
+  var id = req.params['id'];
+  var query = {
+    where: {id: id},
+    include: [models.Post]
+  };
+  var result = [];
+  models.Blog.findOne(query).then( function(blog) {
+    if(!blog) {
+      return res.status(404).json({error: 'BlogNotFound'});
+    } else {
+      for(var i=blog.Posts.length-1; i>=blog.Posts.length-10; i--){
+        if(i == 0){
+          break;
+        }
+        result.push(blog.Posts[i]);
+      }
+      return res.status(200).json(result);
+    }
+  }
+});
+
 module.exports = router;
