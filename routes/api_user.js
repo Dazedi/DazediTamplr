@@ -142,6 +142,7 @@ router.delete('/:username', function(req, res, next) {
 router.get('/:username/blogs', function(req, res, next) {
   var username = req.params['username'];
   var query = {where: {username: username}};
+  var result = [];
   models.User.findOne(query).then(function(user) {
     if(!user) {
       return res.status(404).json({error: 'UserNotFound'});
@@ -149,8 +150,14 @@ router.get('/:username/blogs', function(req, res, next) {
       models.Blog.findAll({ 
         include: [ models.Author ]
       }).success(function(stuff) {
-        var keys = Object.keys(stuff);
-        return res.status(200).json(keys);
+        for(var i=0;i<stuff.length;i++){
+          for(var j=0;j<stuff[i].Authors.length;j++){
+            if(stuff[i].Authors[j].username == username){
+              result.push({id: stuff[i].id});
+            }
+          }
+        }
+        return res.status(200).json(result);
       });
     }
   });
