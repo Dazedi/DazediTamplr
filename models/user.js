@@ -7,11 +7,11 @@ module.exports = function(sequelize, DataTypes) {
     password: DataTypes.STRING,
     likes: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
-      defaultValue: '{}'
+      defaultValue: {}
     }, //post likes
     follows: {
       type: DataTypes.ARRAY(DataTypes.STRING),
-      defaultValue: '{}'
+      defaultValue: {}
     } //blog follows
   }, {
     classMethods: {

@@ -5,7 +5,7 @@ module.exports = function(sequelize, DataTypes) {
     name: DataTypes.STRING,
     followers: {
       type: DataTypes.ARRAY(DataTypes.STRING),
-      defaultValue: '{}'
+      defaultValue: {}
     } // followers of the blog
   }, {
     classMethods: {
