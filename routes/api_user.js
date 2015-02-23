@@ -9,7 +9,7 @@ var models = require('../models');
 // curl -X POST http://myappv2.herokuapp.com/api/user
 // -H 'Content-Type: application/json' 
 // -d '{"username": "username", "realname": "realname", "password": "pw"}'
-/*
+
 router.post('/', function(req, res, next) {
 
   // TODO
@@ -156,7 +156,7 @@ router.delete('/:username', function(req, res, next) {
       },
       function(err) {
         return res.status(500).json({error: 'ServerError'});
-      });*//*
+      });*/
     }
   });
 });
@@ -178,7 +178,7 @@ router.get('/:username/blogs', function(req, res, next) {
         result.push({id: target.id});
       });
       return res.status(200).json(result);
-*/
+
       /*
       models.Blog.findAll({ where: { }}).success(function(stuff) {
         for(var i=0;i<stuff.length;i++){
@@ -190,7 +190,7 @@ router.get('/:username/blogs', function(req, res, next) {
         }
         return res.status(200).json(result);
       });
-      *//*
+      */
     }
   });
 });
@@ -315,6 +315,6 @@ router.delete('/:username/likes/:id', function(req, res, next) {
       });
     }
   });
-});*/
+});
 
 module.exports = router;

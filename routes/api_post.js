@@ -3,7 +3,7 @@ var router = express.Router();
 
 var models = require('../models');
 
-/*
+
 /api/user/:username/likes/:id
 function getLikes(id){
 
@@ -16,6 +16,6 @@ router.get('/:id', function(req, res, next) {
     
     return res.json(result);
   }
-});*/
+});
 
 module.exports = router;

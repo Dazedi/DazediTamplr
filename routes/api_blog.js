@@ -3,7 +3,7 @@ var router = express.Router();
 
 var models = require('../models');
 
-/*
+
 // WORKS WHEN LOGGED IN (need to add auth)
 router.post('/', function(req, res, next) {
 
@@ -21,7 +21,7 @@ router.post('/', function(req, res, next) {
     // NEED TO ADD THE CREATOR (USER WHO IS LOGGED IN) AS
     // AN AUTHOR? USER OWNS A BLOG SO WE MIGHT NEED TO FIRST
     // DO THIS:
-    /*
+    
     models.User.findOne({
       where: { username: <LOGGED IN USERNAME> }
     }).then(function(user) {
@@ -33,9 +33,9 @@ router.post('/', function(req, res, next) {
         });
       });
     });
-    */
+    
     // HOWEVER WHEN USER IS CREATED, A DEFAULT BLOG IS CREATED
-/*
+
     return res.status(201).json(result.id);
     //return res.status(201).json(user.id);
   });
@@ -151,7 +151,7 @@ router.get('/:id/posts', function(req, res, next) {
   }
 });
 
-/*
+
 // WORKS WHEN LOGGED IN AND IS AN AUTHOR OF THE BLOG(need to add check later)
 router.post('/:id/posts', function(res, req, next) {
   var id = req.params['id'];
@@ -183,6 +183,6 @@ router.post('/:id/posts', function(res, req, next) {
     return res.status(201).json(result.id);
     //return res.status(201).json(user.id);
   });
-});*/
+});
 
 module.exports = router;
