@@ -12,13 +12,13 @@
     "jade": "latest",
     "express": "~4.11.1",
     "morgan": "~1.5.1",
-    "pg": "^4.2.0",
-    "pg-hstore": "^2.3.1",
+    "pg": "latest",
+    "pg-hstore": "^latest",
     "sequelize": "^2.0.0-rc8",
     "sequelize-cli": "^1.2.0",
     "serve-favicon": "~2.2.0"
-  },
-  "optionalDependencies": {
-    "sqlite3": "latest"
-  }
+  }//,
+  //"optionalDependencies": {
+  //  "sqlite3": "latest"
+  //}
 }
