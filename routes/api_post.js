@@ -11,11 +11,11 @@ function getLikes(id){
 */
 router.get('/:id', function(req, res, next) {
   var id = req.params['id'];
-  models.Post.findOne({where: {id: id}}).then(function(post)){
+  models.Post.findOne({where: {id: id}}).then(function(post){
     var result = { title: post.title, realname: user.realname};
     
     return res.json(result);
-  }
+  });
 });
 
 module.exports = router;
