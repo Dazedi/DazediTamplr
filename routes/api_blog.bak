@@ -14,9 +14,6 @@ router.post('/', function(req, res, next) {
   models.Blog.create({ 
     name: name 
   }).complete(function(err, result) {
-    //result.addUser(user);
-    //user.addBlog(blog);
-
     // NEED TO ADD THE CREATOR (USER WHO IS LOGGED IN) AS
     // AN AUTHOR? USER OWNS A BLOG SO WE MIGHT NEED TO FIRST
     // DO THIS:
@@ -71,15 +68,26 @@ router.get('/:id', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
   var id = req.params['id'];
   var query = {where: {id: id}};
-  models.Blog.findOne({where: {id: id}}).then(function(blog) {
+  models.Blog.findOne(
+    {
+      where: {id: id},
+      include:[
+        {
+          model: Author
+        }
+      ]
+    }).then(function(blog) {
     if (!blog) {
       return res.status(404).json({error: 'BlogNotFound'});
     }
     else {
-      // destroying blog _should_ cascade and destroy all posts 
-      // and deal with associations
-      blog.destroy().complete(function(){
-        return res.status(200).end();
+      models.Author.destroy({ where: {BlogID: blog.id}}).then(function (affectedRows){
+        blog.destroy().then(function(){
+          return res.status(200).send('OK');
+        });
+      },
+      function(err) {
+        return res.status(500).json({error: 'ServerError'});
       });
     }
   });
@@ -94,25 +102,22 @@ router.put('/:id/author/:username', function(req, res, next) {
   models.Blog.findOne(query).then( function(blog) {
     if(!blog){
       return res.status(404).json({error: 'BlogNotFound'});
-    } else {
-      models.User.findOne({where:{username:username}}).then(function(user){
-        if(!user){
-          return res.status(404).json({error: 'UserNotFound'});
-        } else {
-          blog.addUser(user);
-          user.addBlog(blog);
-        }
-      });
     }
+    models.Author.create({
+      username: username
+    }).then(function(username) {
+      username.setBlog(blog).then(function() {
+        return res.status(200).send('OK');
+      });
+    });
   });
 });
-
-// add DELETE /:id/author/:username HERE
 
 router.get('/:id/posts', function(req, res, next) {
   var id = req.params['id'];
   var query = {
-    where: {id: id}
+    where: {id: id},
+    include: [models.Post]
   };
   var result = [];
   if(typeof id == 'number'){
@@ -120,37 +125,32 @@ router.get('/:id/posts', function(req, res, next) {
       if(!blog) {
         return res.status(404).json({error: 'BlogNotFound'});
       } else {
-        blog.getPosts().success(function(posts){
-          for(var i=posts.length-1; i>=posts.length-10; i--){
-            if(i == 0){
-              break;
-            }
-            result.push({"id":posts[i].id, "title":posts[i].title, "author":posts[i].author});
+        for(var i=blog.Posts.length-1; i>=blog.Posts.length-10; i--){
+          if(i == 0){
+            break;
           }
-          return res.status(200).json(result);
-        });
+          result.push(blog.Posts[i]);
+        }
+        return res.status(200).json(result);
       }
     });
   } else {
-    models.DefBlog.findOne(query).then(function(blog) {
+    models.defBlog.findOne(query).then(function(blog) {
       if(!blog) {
         return res.status(404).json({error: 'BlogNotFound'});
       } else {
-        blog.getPosts().success(function(posts){
-          for(var i=posts.length-1; i>=posts.length-10; i--){
-            if(i == 0){
-              break;
-            }
-            result.push(posts[i]);
+        for(var i=blog.Posts.length-1; i>=blog.Posts.length-10; i--){
+          if(i == 0){
+            break;
           }
-          return res.status(200).json(result);
-        });
+          result.push(blog.Posts[i]);
+        }
+        return res.status(200).json(result);
       }
     });
   }
 });
 
-/*
 // WORKS WHEN LOGGED IN AND IS AN AUTHOR OF THE BLOG(need to add check later)
 router.post('/:id/posts', function(res, req, next) {
   var id = req.params['id'];
@@ -182,6 +182,6 @@ router.post('/:id/posts', function(res, req, next) {
     return res.status(201).json(result.id);
     //return res.status(201).json(user.id);
   });
-});*/
+});
 
 module.exports = router;

@@ -1,14 +1,22 @@
 "use strict";
 
+// Default blog (created when user is created).
+// I suppose I could've used blog as: 'defaultblog'==?
+
 module.exports = function(sequelize, DataTypes) {
-  var Blog = sequelize.define("Blog", {
+  var DefBlog = sequelize.define("DefBlog", {
+    id: {
+      type: DataTypes.STRING,
+      autoIncrement: false,
+      primaryKey: true
+    },
     name: DataTypes.STRING,
     followers: DataTypes.ARRAY(DataTypes.STRING) // followers of the blog
   }, {
     classMethods: {
       associate: function(models) {
-        Blog.hasMany(models.Post, { onDelete: 'CASCADE'  });
-        Blog.hasMany(models.User, { through: 'userblogs' });
+        DefBlog.hasMany(models.Post, { onDelete: 'CASCADE'});
+        DefBlog.belongsTo(modelsUser);
         //User.hasMany(models.Post)
         
         // Tässä voi assosioida malleja toisiinsa
@@ -20,5 +28,5 @@ module.exports = function(sequelize, DataTypes) {
     }
   });
 
-  return Blog;
+  return DefBlog;
 };
