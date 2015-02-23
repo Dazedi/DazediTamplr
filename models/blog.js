@@ -3,10 +3,7 @@
 module.exports = function(sequelize, DataTypes) {
   var Blog = sequelize.define("Blog", {
     name: DataTypes.STRING,
-    followers: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
-      defaultValue: {}
-    } // followers of the blog
+    followers: DataTypes.ARRAY(DataTypes.STRING) // followers of the blog
   }, {
     classMethods: {
       associate: function(models) {
