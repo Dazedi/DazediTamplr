@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
     likes: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
       defaultValue: {}
-    } //post likes
+    }, //post likes
     follows: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       defaultValue: {}
