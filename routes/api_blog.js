@@ -15,13 +15,14 @@ router.post('/', function(req, res, next) {
   models.Blog.create({ 
     name: name 
   }).complete(function(err, result) {
-    //result.addUser(user);
-    //user.addBlog(result);
+    result.addUser(user);
+    user.addBlog(result);
 
     // NEED TO ADD THE CREATOR (USER WHO IS LOGGED IN) AS
     // AN AUTHOR? USER OWNS A BLOG SO WE MIGHT NEED TO FIRST
     // DO THIS:
     
+    /*
     models.User.findOne({
       where: { username: <LOGGED IN USERNAME> }
     }).then(function(user) {
@@ -33,7 +34,7 @@ router.post('/', function(req, res, next) {
         });
       });
     });
-    
+    */
     // HOWEVER WHEN USER IS CREATED, A DEFAULT BLOG IS CREATED
 
     return res.status(201).json(result.id);
