@@ -16,7 +16,7 @@ router.post('/', function(req, res, next) {
     name: name 
   }).complete(function(err, result) {
     //result.addUser(user);
-    //user.addBlog(blog);
+    //user.addBlog(result);
 
     // NEED TO ADD THE CREATOR (USER WHO IS LOGGED IN) AS
     // AN AUTHOR? USER OWNS A BLOG SO WE MIGHT NEED TO FIRST
