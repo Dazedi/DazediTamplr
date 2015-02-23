@@ -11,7 +11,10 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true
     },
     name: DataTypes.STRING,
-    followers: DataTypes.ARRAY(DataTypes.STRING) // followers of the blog
+    followers: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      defaultValue: '{}'
+    } // followers of the blog
   }, {
     classMethods: {
       associate: function(models) {
