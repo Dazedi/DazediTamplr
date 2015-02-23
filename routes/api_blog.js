@@ -3,6 +3,7 @@ var router = express.Router();
 
 var models = require('../models');
 
+/*
 // WORKS WHEN LOGGED IN (need to add auth)
 router.post('/', function(req, res, next) {
 
@@ -34,7 +35,7 @@ router.post('/', function(req, res, next) {
     });
     */
     // HOWEVER WHEN USER IS CREATED, A DEFAULT BLOG IS CREATED
-
+/*
     return res.status(201).json(result.id);
     //return res.status(201).json(user.id);
   });
