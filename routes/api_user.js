@@ -145,7 +145,6 @@ router.delete('/:username', function(req, res, next) {
       user.destroy().complete(function() {
         return res.status(200).end();
       });
-      */
       /*
       user.getDefBlog().complete( function(defblog) {
 
