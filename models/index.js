@@ -19,8 +19,8 @@ function connectToDatabase() {
   // niin käytetään Vagrantiin asennettua PostgreSQL-kantaa.
   //
   // Muussa tapauksessa käytetään SQLite-kantaa tiedostossa database-tamplr.
-
-  var url = process.env.DATABASE_URL;
+  var url = 'localhost:4532';
+  //var url = process.env.DATABASE_URL;
   if (url) {
     return connectToPostgres(url);
   }

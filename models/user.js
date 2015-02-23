@@ -5,14 +5,8 @@ module.exports = function(sequelize, DataTypes) {
     username: DataTypes.STRING,
     realname: DataTypes.STRING,
     password: DataTypes.STRING,
-    likes: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER),
-      defaultValue: {}
-    }, //post likes
-    follows: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
-      defaultValue: {}
-    } //blog follows
+    likes: DataTypes.ARRAY(DataTypes.INTEGER), //post likes
+    follows: DataTypes.ARRAY(DataTypes.STRING)//blog follows
   }, {
     classMethods: {
       associate: function(models) {
