@@ -199,14 +199,19 @@ router.get('/:username/blogs', function(req, res, next) {
   });
 });
 
-/*
+
 router.get('/:username/follows', function(req, res, next) {
   var username = req.params['username'];
-  models.User.findOne({where:{username: username}}).then(function(user){
-    if(!user){
+  var query = {where: {username: username}, include: [{model: models.Blog, as: 'FollowedBlogs'}]};
+  var result = [];
+  models.User.find(query).then(function(user) {
+    if(!user) {
       return res.status(404).json({error: 'UserNotFound'});
     } else {
-      return res.status(200).json(user.follows);
+      user.FollowedBlogs.forEach(function(blog){
+        result.push({id: blog.id});
+      })
+      return res.status(200).json(result);
     }
   });
 });
@@ -214,67 +219,53 @@ router.get('/:username/follows', function(req, res, next) {
 router.put('/:username/follows/:id', function(req, res, next) {
   var username = req.params['username'];
   var id = req.params['id'];
-  models.User.findOne({where:{username:username}}).then(function(user){
+  var query = {where: {username: username}, include: [{model: models.Blog, as: 'FollowedBlogs'}]};
+  models.User.findOne(query).then(function(user){
     if(!user){
       return res.status(404).json({error: 'UserNotFound'});
     } else {
-      if(typeof id == 'number'){
-        models.Blog.findOne({where:{id:id}}).then(function(blog){
-          if(!blog){
-            return res.status(404).json({error: 'BlogNotFound'});
-          } else {
-            blog.followers.push(username);
-            user.follows.push(id.toString());
-          }
-        });
-      } else {
-        models.DefBlog.findOne({where:{id:id}}).then(function(blog){
-          if(!blog){
-            return res.status(404).json({error: 'BlogNotFound'});
-          } else {
-            blog.followers.push(username);
-            user.follows.push(id);
-          }
-        });
-      }
+      models.Blog.findOne({where:{id:id}}).then(function(blog){
+        if(!blog){
+          return res.status(404).json({error: 'BlogNotFound'});
+        } else {
+          user.addFollowedBlog(blog).then(function(){
+            return res.status(201).json(user);
+          },
+          function(err){
+            return res.status(500).json({error: 'following blog by user failed'});
+          });
+        }
+      });
     }
   });
 });
+
 
 router.delete('/:username/follows/:id', function(req, res, next) {
   var username = req.params['username'];
   var id = req.params['id'];
-  models.User.findOne({where:{username:username}}).then(function(user){
+  var query = {where: {username: username}, include: [{model: models.Blog, as: 'FollowedBlogs'}]};
+  models.User.findOne(query).then(function(user){
     if(!user){
       return res.status(404).json({error: 'UserNotFound'});
     } else {
-      if(typeof id == 'number'){
-        models.Blog.findOne({where:{id:id}}).then(function(blog){
-          if(!blog){
-            return res.status(404).json({error: 'BlogNotFound'});
-          } else {
-            var index = blog.followers.indexOf(username);
-            blog.followers.splice(index,1);
-            index = user.follows.indexOf(id.toString());
-            user.follows.splice(index,1);
-          }
-        });
-      } else {
-        models.DefBlog.findOne({where:{id:id}}).then(function(blog){
-          if(!blog){
-            return res.status(404).json({error: 'BlogNotFound'});
-          } else {
-            var index = blog.followers.indexOf(username);
-            blog.followers.splice(index,1);
-            index = user.follows.indexOf(id.toString());
-            user.follows.splice(index,1);
-          }
-        });
-      }
+      models.Blog.findOne({where:{id:id}}).then(function(blog){
+        if(!blog){
+          return res.status(404).json({error: 'BlogNotFound'});
+        } else {
+          user.removeFollowedBlog(blog).then(function(){
+            return res.status(201).json(user);
+          },
+          function(err){
+            return res.status(500).json({error: 'user is not following the blog'});
+          });
+        }
+      });
     }
   });
 });
 
+/*
 router.put('/:username/likes/:id', function(req, res, next) {
   var username = req.params['username'];
   var id = req.params['id'];

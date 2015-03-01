@@ -32,103 +32,121 @@ router.post('/', function(req, res, next) {
 		  	})
 		 	})
 		})
-		
-    //result.addUser(user);
-    //user.addBlog(result);
-
-    // NEED TO ADD THE CREATOR (USER WHO IS LOGGED IN) AS
-    // AN AUTHOR? USER OWNS A BLOG SO WE MIGHT NEED TO FIRST
-    // DO THIS:
-    
-    /*
-    models.User.findOne({
-      where: { username: <LOGGED IN USERNAME> }
-    }).then(function(user) {
-      models.Blog.create({
-        name: name
-      }).then(function(createdBlog) {
-        createdBlog.setUser(user).then(function() {
-          return res.status(201).json(createdBlog.id);
-        });
-      });
-    });
-    */
-    // HOWEVER WHEN USER IS CREATED, A DEFAULT BLOG IS CREATED
-
-    	
-    //return res.status(201).json(user.id);
-    
   });
 });
 
-// router.get('/:id', function(req, res, next) {
-//   var id = req.params['id'];
-//   var query = {where: {id: id}};
-//   if(typeof id == 'number'){
-//     models.Blog.findOne(query).then(function(blog) {
-//       if (blog) {
-//         var result = { id: blog.id, name: blog.name};
-//         return res.json(result);
-//       }
-//       else {
-//         return res.status(404).json({error: 'BlogNotFound'});
-//       }
-//     });
-//   } else {
-//     models.defBlog.findOne(query).then(function(blog) {
-//       if(blog){
-//         var result = { id: blog.id, name: blog.name};
-//         return res.json(result);
-//       }
-//       else {
-//         return res.status(404).json({error: 'BlogNotFound'});
-//       }
-//     });
-//   }
-  
-// });
+router.get('/:id', function(req, res, next) {
+  var id = req.params['id'];
+  var query = {where: {id: id}};
+  models.Blog.findOne(query).then(function(blog) {
+    if (blog) {
+      var result = { id: blog.id, name: blog.name};
+      return res.json(result);
+    }
+    else {
+      return res.status(404).json({error: 'BlogNotFound'});
+    }
+  });
+});
 
-// // WORKS WHEN LOGGED IN AND IS AN AUTHOR OF THE BLOG(need to add check later)
-// router.delete('/:id', function(req, res, next) {
-//   var id = req.params['id'];
-//   var query = {where: {id: id}};
-//   models.Blog.findOne({where: {id: id}}).then(function(blog) {
-//     if (!blog) {
-//       return res.status(404).json({error: 'BlogNotFound'});
-//     }
-//     else {
-//       // destroying blog _should_ cascade and destroy all posts 
-//       // and deal with associations
-//       blog.destroy().complete(function(){
-//         return res.status(200).end();
-//       });
-//     }
-//   });
-// });
+// WORKS WHEN LOGGED IN AND IS AN AUTHOR OF THE BLOG(need to add check later)
+router.delete('/:id', function(req, res, next) {
+  var id = req.params['id'];
+  var query = {where: {id: id}};
+  models.Blog.findOne({where: {id: id}}).then(function(blog) {
+    if (!blog) {
+      return res.status(404).json({error: 'BlogNotFound'});
+    }
+    else {
+      // destroying blog _should_ cascade and destroy all posts 
+      // and deal with associations
+      blog.destroy().complete(function(){
+        return res.status(200).end();
+      });
+    }
+  });
+});
 
 
-// // WORKS WHEN LOGGED IN AND IS AN AUTHOR OF THE BLOG(need to add check later)
-// router.put('/:id/author/:username', function(req, res, next) {
-//   var id = req.params['id'];
-//   var username = req.params['username'];
-//   var query = {where: {id: id}};
-//   models.Blog.findOne(query).then( function(blog) {
-//     if(!blog){
-//       return res.status(404).json({error: 'BlogNotFound'});
-//     } else {
-//       models.User.findOne({where:{username:username}}).then(function(user){
-//         if(!user){
-//           return res.status(404).json({error: 'UserNotFound'});
-//         } else {
-//           blog.addUser(user);
-//           user.addBlog(blog);
-//         }
-//       });
-//     }
-//   });
-// });
+// WORKS WHEN LOGGED IN AND IS AN AUTHOR OF THE BLOG(need to add check later)
+router.put('/:id/author/:username', function(req, res, next) {
+  var id = req.params['id'];
+  var username = req.params['username'];
+  var query = {where: {id: id}, include: [{model: models.User, as: 'Authors'}]};
+  models.Blog.findOne(query).then( function(blog) {
+    if(!blog){
+      return res.status(404).json({error: 'BlogNotFound'});
+    } else {
+    	if(!parseInt(id)){
+    		return res.status(403).json({error: 'Unable to change authors'});
+    	} else {
+	  		var result = [];
+	  		blog.Authors.forEach(function(user){
+	  			result.push({username:user.username});
+	  		})
+	  		var found = false;
+	  		for(var i = 0; i < result.length; i++){
+	  			if(result[i].username == username){
+	  				found = true;
+	  			}
+	  		}
+	  		if(!found){
+	  			models.User.find({where:{username:username}}).then(function(userToAdd){
+	  				if(!userToAdd){
+	  					return res.status(403).json({error: 'User not found'});
+	  				} else {
+	  					blog.addAuthor(userToAdd).then(function(){
+	  					//return res.status(200).json({error:'UserAddedAsAuthor'});
+	  					return res.status(200).json(userToAdd);
+	  					})
+	  				}
+	  			})
+	  		}
+  		}
+    }
+  });
+});
 
 // // add DELETE /:id/author/:username HERE
+router.delete('/:id/author/:username', function(req, res, next) {
+	var id = req.params['id'];
+  var username = req.params['username'];
+  var query = {where: {id: id}, include: [{model: models.User, as: 'Authors'}]};
+  models.Blog.findOne(query).then( function(blog) {
+    if(!blog){
+      return res.status(404).json({error: 'BlogNotFound'});
+    } else {
+    	if(!parseInt(id)){
+    		return res.status(403).json({error: 'Unable to change authors'});
+    	} else {
+	  		var result = [];
+	  		blog.Authors.forEach(function(user){
+	  			result.push({username:user.username});
+	  		})
+	  		var found = false;
+	  		for(var i = 0; i < result.length; i++){
+	  			if(result[i].username == username){
+	  				found = true;
+	  			}
+	  		}
+	  		if(!found){
+	  			return res.status(403).json({error: 'No Such Author'});
+	  		} else {
+	  			models.User.find({where:{username:username}}).then(function(userToRemove){
+	  				if(!userToRemove){
+	  					return res.status(403).json({error: 'User not found'});
+	  				} else {
+	  					blog.removeAuthor(userToRemove).then(function(){
+	  					//return res.status(200).json({error:'UserAddedAsAuthor'});
+	  					return res.status(200).json(userToRemove);
+	  					})
+	  				}
+	  			})
+	  		}
+  		}
+    }
+  });
+})
 
 // router.get('/:id/posts', function(req, res, next) {
 //   var id = req.params['id'];
