@@ -9,10 +9,10 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function(models) {
-        Post.belongsTo(models.Blog);
+        /*Post.belongsTo(models.Blog);
         Post.belongsTo(models.DefBlog);
         Post.hasMany(models.Comment, { onDelete: 'CASCADE'});
-        Post.belongsTo(models.User);
+        Post.belongsTo(models.User);*/
         //User.hasMany(models.Post)
         
         // Tässä voi assosioida malleja toisiinsa

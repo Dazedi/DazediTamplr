@@ -21,6 +21,7 @@ function connectToDatabase() {
   // Muussa tapauksessa käytetään SQLite-kantaa tiedostossa database-tamplr.
 
   var url = process.env.DATABASE_URL;
+  
   if (url) {
     return connectToPostgres(url);
   }

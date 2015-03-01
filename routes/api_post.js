@@ -9,6 +9,7 @@ function getLikes(id){
 
 }
 */
+/*
 router.get('/:id', function(req, res, next) {
   var id = req.params['id'];
   models.Post.findOne({where: {id: id}}).then(function(post){
@@ -16,6 +17,6 @@ router.get('/:id', function(req, res, next) {
     
     return res.json(result);
   });
-});
+});*/
 
 module.exports = router;

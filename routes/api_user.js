@@ -34,19 +34,26 @@ router.post('/', function(req, res, next) {
         username: username,
         realname: realname,
         password: password
-      }).then(function(err, newUser) {
-        models.DefBlog.create({
+      }).then(function(user) {
+        var defblog = username + "'s default blog.";
+        models.Blog.create({
           id: username,
-          name: "Default Blog"
-        }).then(function(defblog) {
-          defblog.addUser(newUser);
-          newUser.setDefBlog(defblog);
-          return res.status(201).send('OK');
-          //return res.status(201).json(user.id);
+          name: defblog
+        }).then(function(blog){
+          user.addAuthoredBlog(blog).then(function(){
+            return res.status(201).json(user);
+          },
+          function(err){
+            return res.status(500).json({error: 'Adding blog to user failed'});
+          });
+          
+        },
+        function(err) {
+          return res.status(500).json({error: 'Creating blog failed'});
         });
       },
       function(err) {
-        return res.status(500).json({error: 'ServerError'});
+        return res.status(500).json({error: 'Creating user failed'});
       });
     } 
   });
@@ -73,8 +80,12 @@ router.get('/:username', function(req, res, next) {
     else {
       return res.status(404).json({error: 'UserNotFound'});
     }
+  },
+  function(err) {
+    return res.status(500).json({error: 'Server Error'});
   });
 });
+
 
 // Update user information
 // -----------------------
@@ -98,7 +109,7 @@ router.put('/:username', function(req, res, next) {
       // Realname is empty => update password
       if(!realname) {
         models.User.update({ password: password },query).then(function(user) {
-          return res.status(200).json(user);
+          return res.status(200).json({error: 'ok'});
         },
         function(err) {
           return res.status(500).json({error: 'ServerError'});
@@ -106,7 +117,7 @@ router.put('/:username', function(req, res, next) {
       // Password is empty => update realname
       } else if(!password) {
         models.User.update({ realname: realname },query).then(function(user) {
-          return res.status(200).json(user);
+          return res.status(200).json({error: 'ok'});
         },
         function(err) {
           return res.status(500).json({error: 'ServerError'});
@@ -114,7 +125,7 @@ router.put('/:username', function(req, res, next) {
       // Update realname and password
       } else {
         models.User.update({ realname: realname, password: password },query).then(function(user) {
-          return res.status(200).json(user);
+          return res.status(200).json({error: 'ok'});
         },
         function(err) {
           return res.status(500).json({error: 'ServerError'});
@@ -131,53 +142,47 @@ router.put('/:username', function(req, res, next) {
 // WORKS WHEN LOGGED IN AND LOGGED IN === USERNAME(need to add check later)
 router.delete('/:username', function(req, res, next) {
   var username = req.params['username'];
-  var query = {where: {username: username}};
-  models.User.findOne(query).then(function(user) {
+  var query = {where: {username: username}, include: [{model: models.Blog, as: 'AuthoredBlogs'}]};
+  models.User.find(query).then(function(user) {
     if (!user) {
       return res.status(404).json({error: 'UserNotFound'});
     }
     else {
-      models.Post.findAll({where: {id: user.likes}}).then(function(posts){
-        posts.forEach(function(post){
-          post.decrement('likes', 1);
-        })
+      models.Blog.find({where: {id: username}}).then(function(blog){
+        user.destroy().then(function(){ 
+          // POST DEStrUction ?!?!
+          blog.destroy().then(function(){
+            return res.status(500).json({error: 'user and blog destroyed'});
+          }) 
+        }) 
       })
-      user.destroy().complete(function() {
-        return res.status(200).end();
-      });
-      /*
-      user.getDefBlog().complete( function(defblog) {
-
-      })
-
-      models.User.destroy(query).then(function () {
-        return res.status(200).json(user);
-      },
-      function(err) {
-        return res.status(500).json({error: 'ServerError'});
-      });*/
     }
   });
 });
 
+
 router.get('/:username/blogs', function(req, res, next) {
   var username = req.params['username'];
-  var query = {where: {username: username}};
+  var query = {where: {username: username}, include: [{model: models.Blog, as: 'AuthoredBlogs'}]};
   var result = [];
-  models.User.findOne(query).then(function(user) {
+  models.User.find(query).then(function(user) {
     if(!user) {
       return res.status(404).json({error: 'UserNotFound'});
     } else {
-      user.getBlogs().complete(function(err, targets) {
-        targets.forEach(function(target) {
-          result.push({id: target.id});
+      user.AuthoredBlogs.forEach(function(blog){
+        result.push({id: blog.id});
+      })
+      return res.status(200).json(result);
+      /*
+      user.getAuthoredBlogs().then(function(blogs) {
+        return res.status(400).json(blogs[0]);
+        blogs.forEach(function(blog) {
+          //result.push({id: blog.id});
+          result.push(blog);
         });
       });
-      user.getDefBlog().complete(function(err, target) {
-        result.push({id: target.id});
-      });
       return res.status(200).json(result);
-
+      */
       /*
       models.Blog.findAll({ where: { }}).success(function(stuff) {
         for(var i=0;i<stuff.length;i++){
@@ -194,6 +199,7 @@ router.get('/:username/blogs', function(req, res, next) {
   });
 });
 
+/*
 router.get('/:username/follows', function(req, res, next) {
   var username = req.params['username'];
   models.User.findOne({where:{username: username}}).then(function(user){
@@ -314,6 +320,6 @@ router.delete('/:username/likes/:id', function(req, res, next) {
       });
     }
   });
-});
+});*/
 
 module.exports = router;
