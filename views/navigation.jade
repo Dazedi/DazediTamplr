@@ -1,0 +1,31 @@
+script(src='/javascripts/jquery-2.1.3.min.js')
+script(src='/javascripts/app.js')
+
+
+.navigation.col-xs-12.navbar-fixed-top(style="background-color:#ffffff")
+	.container
+		h1.tamplr-logo.pull-left(style="margin:7px; font-size: 40px") tamplr
+		ul.nav.nav-pills.pull-right
+			li.dropdown.visible-xs(role="presentation")
+				a.dropdown-toggle(data-toggle="dropdown" href="#" role="button" aria-expanded="false")
+					h1.tamplr-logo2 MENU <span class="caret"></span>
+				ul.dropdown-menu(role="menu")
+					li 
+						a(href="/login") Login
+					li 
+						a(href="/register") Create Account
+			li.dropdown.visible-sm.visible-md(role="presentation")
+				a.dropdown-toggle(data-toggle="dropdown" href="#" role="button" aria-expanded="false")
+					h1.tamplr-logo2 MENU <span class="caret"></span>
+				ul.dropdown-menu(role="menu")
+					li 
+						a(href="/login") Login
+					li 
+						a(href="/register") Create Account
+			li.visible-lg(role="presentation")
+				a(href="/login")
+					h1.tamplr-logo2 Login
+			li.visible-lg(role="presentation")
+				a(href="/register")
+					h1.tamplr-logo2 Create Account
+	

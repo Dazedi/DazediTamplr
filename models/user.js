@@ -25,6 +25,9 @@ module.exports = function(sequelize, DataTypes) {
 
         User.belongsToMany(models.Blog, {as: 'AuthoredBlogs', through: 'author_authoredblogs'});
         User.belongsToMany(models.Blog, {as: 'FollowedBlogs', through: 'follower_followedblogs'});
+        User.hasMany(models.Post);
+        User.hasMany(models.Comment);
+        User.belongsToMany(models.Post, {as: 'LikedPosts', through: 'likes_likedposts'});
 
         // Tässä voi assosioida malleja toisiinsa
         // http://sequelize.readthedocs.org/en/latest/docs/associations/

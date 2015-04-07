@@ -1,3 +1,4 @@
+/*
 .nav {
     padding-top: 4px;
     padding-bottom: 4px;
@@ -20,75 +21,45 @@
     padding-left: 0;
     padding-top: 8px;
     padding-bottom: 8px;
-}
+}*/
 
-.jumbotron {
-	background-image: url("../images/gaming.png");
-	height: 500px;
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center center;
-	margin-bottom: 0;
-    padding-right: 0;
-    padding-left: 0;
-}
 
-.jumbotron h1 {
-    margin-top: 0;
-    margin-bottom: 0;
-    -webkit-font-smoothing: antialiased;
-    text-shadow:  0 1px 8px rgba(0, 0, 0, 0.6);
-}
 
-.jumbotron p {
-    margin-top: 0;
-    text-shadow:  0 -1px 1px rgba(0, 0, 0, 0.6);
-}
-
-.jumbotron a {
-    font-size: 20px;
-    color: #00b0ff;
-}
-
-.jumbotron .container {
-	position: relative;
-	top: 0px;
-}
-
-.jumbotron h1 {
-	color: #fff;
-	font-size: 48px;  
-	font-family: 'Shift', sans-serif;
-	font-weight: bold;
-}
-
-.jumbotron p {
-	font-size: 20px;
-	color: #fff;
-}
-
-.favourites {
-    background-color: #efefef;
-    border-bottom: 1px solid #dbdbdb;
-}
-.favourites h2 {
+.favourites h2, .register h2 {
     margin-top: 37px;
 	color: #393c3d;
-    font-size: 24px;
+    font-size: 1.5em;
 }
+
+.favourites, .register {
+  background-color: #efefef;
+  border-bottom: 1px solid #dbdbdb;
+  margin: 5px;
+  padding-left: 10px;
+  padding-right: 10px; 
+}
+
+.favourites h3, .register h3 {
+  padding-bottom: 2px;
+  border-bottom: 1px solid #dbdbdb;
+}
+
+.favourites footer {
+  border-top: 1px solid #dbdbdb;
+  padding-top: 2px;
+}
+
+
 .favourites .thumbnail {
     margin: none;
     padding: none;
     border: none;
     background-color: transparent;
-    position: relative;
-    max-width: 360px;
-    margin-left: auto;
-    margin-right: auto;
+    
 }
 .favourites .thumbnail h4 {
     font-family: Shift, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 29px;
+    font-size: 1.8125em;
     color: #fff;
     text-shadow: 0 1px 8px rgba(0, 0, 0, .5);
     position: absolute;
@@ -96,7 +67,7 @@
 }
 
 .favourites p {
-    font-size: 15px;
+    font-size: 0.9375em;
     margin-bottom: 13px;
 }
 
@@ -129,7 +100,7 @@
 
 .learn-more h3 {
 	font-family: 'Shift', sans-serif;
-	font-size: 18px;
+	font-size: 1.125em;
 	font-weight: bold;
 }
 
@@ -138,14 +109,14 @@
 }
 
 .disclaimer {
-	font-size: 9px;
+	font-size: 0.5625em;
 	text-align: center;
 }
 
 .dropdown-toggle {
 	color: #5a5a5a;
 	cursor: pointer;
-	font-size: 11px;
+	font-size: 0.6875em;
 	font-weight: bold;
 	padding: 14px 10px;
 	text-transform: uppercase;
@@ -159,7 +130,7 @@
 
 .dropdown-menu a {
 	color: #5a5a5a;
-	font-size: 11px;
+	font-size: 0.6875em;
 	font-weight: bold;
 	padding: 10px;
 	text-transform: uppercase;
@@ -190,11 +161,25 @@
 	margin-right: 10px;
 }
 
+/*
 .posts {
 	list-style: none;
 	clear: both;
 	width: 100%;
 	padding-left: 0px;
+}
+
+.posts h3 {
+	padding-bottom: 2px;
+	border-bottom: 1px solid #dbdbdb;
+}
+
+.posts .author {
+	border-right: 1px solid #dbdbdb;
+}
+
+.posts .post {
+	border-right: 1px solid #dbdbdb;
 }
 
 .posts li {
@@ -205,7 +190,7 @@
 	word-wrap: break-word;
 	min-height: 42px;
 }
-
+*/
 .slider {
 	background-color: #efefef;
 	width: 100%;
@@ -264,7 +249,7 @@
 
 .slider-dots li {
 	display: inline;
-	font-size: 30px;
+	font-size: 1.875em;
 	color: #aaa;
 }
 
@@ -309,13 +294,13 @@
 	position: center center;
 }
 
-#result {
+#result, #text, #likes {
 	font-family: Consolas, monospace;
-    font-size: 12px;
+    font-size: 0.75em;
     color: black;
 }
 
-#background {
+.background {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -324,15 +309,23 @@
 	z-index: -1;
 }
 
-#HTILMO {
-	padding-top: 10px;
-}
-
 #log p {
 	text-align: justify;
 }
 
+body {
+	background-color: #99CCFF;
+}
+
+form legend {
+	padding: 5px 15px 5px 30px;
+}
+
 form 		{ display: table; border-spacing: 2px;		}
 form div p 	{ display: table-row;						}
-label			{ display: table-cell; white-space: nowrap;	padding-right: 20px}
-input			{ display: table-cell; 						}
+label		{ display: table-cell; white-space: nowrap;	padding-right: 20px}
+input		{ display: table-cell; 						}
+
+/*body {
+	background-color: #C6E2FF;
+}*/

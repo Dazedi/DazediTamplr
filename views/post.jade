@@ -1,0 +1,89 @@
+doctype html
+html(lang="en")
+  include head.jade
+  body
+    .container
+      - if (user)
+        include auth_navigation
+      - else
+        include navigation 
+    script.
+      $(document).ready(function(){
+        var title, text, author, likes;
+        $.get("/api/post/#{id}", function(data){
+          //alert("Data: " + JSON.stringify(data));
+          title = "<h4>"+data.title+"</h4>";
+          text = "<p>"+data.text+"</a>";
+          author = "<h4><a href=\"/api/user/"+data.author+"\">"+data.author+"</a></h4>";
+          //author = "<h4>Mlem</h4>";
+          likes = "<p>Amount of likes: "+data.likes+"</p>";
+          $(title).appendTo("#title");
+          $(author).prependTo(".user");
+          $(text).appendTo("#post");
+          $(likes).appendTo("#likes");
+        });
+      });
+
+    - if(user)
+      script.
+        $(document).on('click', '#likeButton', function(){
+          $.ajax({
+            type: "PUT",
+            url: "/api/user/"+"#{user.username}"+"/likes/"+#{id},
+            error: function() {
+                alert('ERROR you should not see this, but you see this in 1.9.0');
+            },
+            success: function() {
+                alert('SUCCESS this does not work in 1.9.0, but you see it works in 1.8.3 and bellow');
+            }
+          });
+        })
+
+
+    //.jumbotron
+    //  .container
+    //    h1 Blog post 
+    //    #author
+
+    .container
+      .row
+        .col-xs-3.user#sidebar
+          form
+            input.btn.btn-default.likeButton.hidden#likeButton(type="button" value="Like")
+          - if(user)
+            script.
+              $('#likeButton').removeClass('hidden');
+        .col-xs-6.bloglist
+          .post.text-justify
+            #title
+            #post
+            #likes
+        .col-xs-3.onlineUsers
+          p harhar
+    
+        //- each post in posts
+        //-   .post.text-justify
+        //-     h3
+        //-       = post.title
+        //-     footer - Posted by 
+        //-       = post.User.username 
+        //-       |  in blog "#{post.Blog.name}"
+
+        //- p Tamplr:ssa on #{users.length} käyttäjää.
+        //- ul
+        //- - for(var i=0; i < users.length; i++){
+        //-   - var u = users[i]; 
+        //-   li
+        //-     a(href="/api/user/#{u.username}")= u.username
+        //- - }
+        //- p.
+        //-   Voit lisätä uuden käyttäjän seuraavanlaisella
+        //-   <a href="http://curl.haxx.se/"> curl</a>-komennolla:
+        //- pre. 
+        //-   curl -X POST http://#{host}/api/user -H 'Content-Type: application/json' -d '{"username": "teemu"}'
+        //- p.
+        //-   Windowsissa pitää käyttää vähän ylimääräisiä kenoviivoja:
+        //- pre. 
+        //-   curl -X POST http://#{host}/api/user -H 'Content-Type: application/json' -d '{\"username\": \"teemu\"}'
+        //- p.
+        //-   Click here to  <a href='/login'> LOGIN </a>

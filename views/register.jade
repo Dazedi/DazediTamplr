@@ -1,0 +1,91 @@
+doctype html
+html(lang="en")
+  include head.jade
+  body
+    .container
+      include navigation.jade
+
+    .jumbotron
+      .container
+          h1 New user registration
+          p Have fun blogging!
+
+    .register
+      .container
+        span#FORM
+          form(id='registerForm', method='POST', action='/api/user')
+            legend New user registration - fill out your details
+            .col-md-6
+              p
+                label Username(a-z,0-9,_):
+                input(type='text', name='username', pattern='[a-z][a-z0-9_]{0,20}', required)
+              p
+                label Realname(a-z):
+                input(type='text', name='realname', required)
+              p
+                label Password(a-z,0-9,_):
+                input(type='password', name='password', pattern='[a-z0-9_]{0,30}', required)
+              input(type='submit', value='Submit', class='btn')
+            .col-md-6
+              #result
+        script.
+          $("#registerForm").submit(function(e){
+            e.preventDefault();
+            e.returnValue = false;
+            var $form = $(this);
+
+            $.ajax({
+              type: $form.attr('method'),
+              url: $form.attr('action'),
+              data: $form.serialize(),
+              dataType: "json",
+              statusCode: {
+                201: function() {
+                  alert("User creation successfull - redirecting");
+                }
+              },
+              error: function(xmlHttp, status, error) {
+                if(xmlHttp.status === 400){
+                  data = "There is something wrong with the request\n";
+                  data += xmlHttp.responseJSON.error;
+                  alert(data);
+                } else if(xmlHttp.status === 409){
+                  data = "User with this username already exists";
+                  alert(data);
+                } else if(xmlHttp.status === 500){
+                  data = "Something went wrong on the server";
+                  data += xmlHttp.responseJSON.error;
+                  alert(data);
+                }
+              },
+              complete: function(xmlHttp, status) {
+                window.location.href = "/";
+              }
+              /*
+              success: function(data){
+                alert("derp")
+              }
+              error: function(XMLHttpRequest, textStatus, errorThrown){
+                if (jqXHR.readyState < 4) {
+                  alert('shit');
+                } 
+                alert('error');
+                $(data).appendTo("#result");
+              }*/
+              /*
+              error: function(XMLHttpRequest, textStatus, errorThrown) {
+                $('#result').empty();
+                var data;
+                if(XMLHttpRequest.status === 400){
+                  data = "<div><p>There is something wrong with the request</p>";
+                  data += "<p>"+XMLHttpRequest.statusText+"</p></div>";
+                } else if(XMLHttpRequest.status === 409){
+                  data = "<div><p>User with this username already exists</p></div>";
+                } else if(XMLHttpRequest.status === 500){
+                  data = "<div><p>Something went wrong on the server</p>";
+                  data += "<p>"+XMLHttpRequest.statusText+"</p></div>";
+                }
+                $(data).appendTo("#result");
+              }*/
+            });
+          });

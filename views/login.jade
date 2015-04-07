@@ -1,9 +1,29 @@
 doctype html
 html(lang="en")
-  head
-    title Tamplr - login
-    link(href='http://fonts.googleapis.com/css?family=Bree+Serif', rel='stylesheet', type='text/css')
-    link(href='/stylesheets/style.css', rel='stylesheet')
+  include head.jade
   body
-    h1.tamplr-logo tamplr
-    p Login page
+    .container
+      - if (user)
+        include auth_navigation
+      - else
+        include navigation 
+
+    //h1.tamplr-logo tamplr
+
+    .container
+      .login
+        form.form-horizontal(id='loginForm', method='POST', action='http://localhost:3000/login')
+          legend <h2> Login here </h2>
+          .form-group
+            label(for="InputUsername", class="col-sm-6 control-label") Username(a-z,0-9,_):
+            .col-sm-6
+              input(class="form-control", id="InputUsername", placeholder="Enter username", type='text', 
+                name='username', pattern='[a-z][a-z0-9_]{0,20}', required)
+          .form-group
+            label(for="InputPassword", class="col-sm-6 control-label") Password(a-z,0-9,_):
+            .col-sm-6
+              input.form-control(class="form-control" id="InputPassword", placeholder="Enter password", type='password', 
+                name='password', pattern='[a-z0-9_]{0,30}', required)
+          .form-group
+            .col-sm-offset-2.col-sm-10
+              input.btn.btn-default(type='submit', value='Submit')

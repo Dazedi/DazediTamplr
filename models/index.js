@@ -40,7 +40,7 @@ function connectToSqlite() {
     dialect: 'sqlite',
     storage: './database-tamplr'
   });
-}
+};
 
 function connectToPostgres(url) {
   console.log("Using PostgreSQL database: " + url);

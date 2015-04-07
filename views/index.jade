@@ -1,26 +1,74 @@
 doctype html
 html(lang="en")
-  head
-    title Tamplr
-    link(href='http://fonts.googleapis.com/css?family=Bree+Serif', rel='stylesheet', type='text/css')
-    link(href='/stylesheets/style.css', rel='stylesheet')
+  include head.jade
   body
-    h1.tamplr-logo tamplr
-    p Tamplr:ssa on #{users.length} käyttäjää.
-    ul
-    - for(var i=0; i < users.length; i++){
-      - var u = users[i]; 
-      li
-        a(href="/api/user/#{u.username}")= u.username
-    - }
-    p.
-      Voit lisätä uuden käyttäjän seuraavanlaisella
-      <a href="http://curl.haxx.se/"> curl</a>-komennolla:
-    pre. 
-      curl -X POST http://#{host}/api/user -H 'Content-Type: application/json' -d '{"username": "teemu"}'
-    p.
-      Windowsissa pitää käyttää vähän ylimääräisiä kenoviivoja:
-    pre. 
-      curl -X POST http://#{host}/api/user -H 'Content-Type: application/json' -d '{\"username\": \"teemu\"}'
-    p.
-      Click here to  <a href='/login'> LOGIN </a>
+    .container
+      - if (user)
+        include auth_navigation
+      - else
+        include navigation 
+
+    .jumbotron
+      .container
+          h1 Welcome to Tamplr.
+          p Have fun blogging!
+
+    //.container
+      .col-xs-3
+      .bloglist.col-xs-6
+          h2 Latests posts in followed blogs
+          #result
+      .col-xs-3
+      post_data = "<div class=\"post text-justify\"><h4><b><a href=\"/api/user/"+data[i].author+"\">"
+                +data[i].author+"</a> in blog <a href=\"/api/blog/"+data[i].blogID+"\">"+data[i].blog+"</a></b></h4>"
+                +"<p>Title: <a href=\"/post/"+data[i].id+"\">"+data[i].title+"</a> - on "+date+"</p></div>";
+    .container
+      .row
+        .col-md-3.user
+          h4 Welcome to Tamplr.
+          p.
+            To see more posts remember to log in or if you are a new member, register.
+        .col-md-6.bloglist 
+          h4 Ten latest blogposts
+            //#result
+          each post in posts
+            div.post.text-justify
+              a(href="/post/" + post.id)
+                p
+                  = post.title
+              footer Posted by - 
+                = post.author
+                |  in blog "
+                = post.blog
+                | "
+        .col-md-3.onlineUsers
+          h4 Users logged in
+          p gienwiagnieaw
+          p gieageowa
+          p gniewago
+        //- each post in posts
+        //-   .post.text-justify
+        //-     h3
+        //-       = post.title
+        //-     footer - Posted by 
+        //-       = post.User.username 
+        //-       |  in blog "#{post.Blog.name}"
+
+        //- p Tamplr:ssa on #{users.length} käyttäjää.
+        //- ul
+        //- - for(var i=0; i < users.length; i++){
+        //-   - var u = users[i]; 
+        //-   li
+        //-     a(href="/api/user/#{u.username}")= u.username
+        //- - }
+        //- p.
+        //-   Voit lisätä uuden käyttäjän seuraavanlaisella
+        //-   <a href="http://curl.haxx.se/"> curl</a>-komennolla:
+        //- pre. 
+        //-   curl -X POST http://#{host}/api/user -H 'Content-Type: application/json' -d '{"username": "teemu"}'
+        //- p.
+        //-   Windowsissa pitää käyttää vähän ylimääräisiä kenoviivoja:
+        //- pre. 
+        //-   curl -X POST http://#{host}/api/user -H 'Content-Type: application/json' -d '{\"username\": \"teemu\"}'
+        //- p.
+        //-   Click here to  <a href='/login'> LOGIN </a>

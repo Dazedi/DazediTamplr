@@ -7,7 +7,6 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true
     },
     name: DataTypes.STRING,
-    followers: DataTypes.ARRAY(DataTypes.STRING) // followers of the blog
   }, {
     classMethods: {
       associate: function(models) {
@@ -16,7 +15,9 @@ module.exports = function(sequelize, DataTypes) {
         //Blog.belongsTo(models.User); // Blog is owned by User
         Blog.belongsToMany(models.User, {as: 'Authors', through: 'author_authoredblogs'}); // Users who are authors for this blog
         Blog.belongsToMany(models.User, {as: 'Followers', through: 'follower_followedblogs'});
-        //User.hasMany(models.Post)
+        Blog.hasMany(models.Post)
+
+        //Blog.belongsToMany(models.Post, {as: 'Likedpost', through: 'likedpost_likers'});
         
         // Tässä voi assosioida malleja toisiinsa
         // http://sequelize.readthedocs.org/en/latest/docs/associations/

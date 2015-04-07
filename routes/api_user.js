@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 var models = require('../models');
+var auth = require('../auth');
+var passport = require('passport');
 
 // Create new user
 // ---------------
@@ -41,7 +43,7 @@ router.post('/', function(req, res, next) {
           name: defblog
         }).then(function(blog){
           user.addAuthoredBlog(blog).then(function(){
-            return res.status(201).json(user);
+            return res.status(201).end();
           },
           function(err){
             return res.status(500).json({error: 'Adding blog to user failed'});
@@ -65,12 +67,8 @@ router.post('/', function(req, res, next) {
 // curl -X GET http://myappv2.herokuapp.com/api/user/:username
 // prints out as:
 // {"username": "username", "realname": "realname"}
-
 router.get('/:username', function(req, res, next) {
-
-  // TODO
-
-  var username = req.params['username'];
+  var username = req.params['username']; 
   var query = {where: {username: username}};
   models.User.findOne(query).then(function(user) {
     if (user) {
@@ -93,8 +91,11 @@ router.get('/:username', function(req, res, next) {
 // curl -X PUT http://myappv2.herokuapp.com/api/user/:username
 // -H 'Content-Type: application/json' -d '{"varName": "newValue"}''
 // WORKS WHEN LOGGED IN AND LOGGED IN === USERNAME(need to add check later)
-router.put('/:username', function(req, res, next) {
+router.put('/:username', passport.authenticate('basic', { session: false }), function(req, res, next) {
   var username = req.params['username'];
+  if(req.user.username != username){
+    return res.status(400).json({error: 'Unauthorized access'});
+  }
   var realname = req.body.realname;
   var password = req.body.password;
   if (!realname && !password) {
@@ -140,25 +141,25 @@ router.put('/:username', function(req, res, next) {
 // Works also with:
 // curl -X DELETE http://myappv2.herokuapp.com/api/user/:username
 // WORKS WHEN LOGGED IN AND LOGGED IN === USERNAME(need to add check later)
-router.delete('/:username', function(req, res, next) {
-  var username = req.params['username'];
-  var query = {where: {username: username}, include: [{model: models.Blog, as: 'AuthoredBlogs'}]};
-  models.User.find(query).then(function(user) {
-    if (!user) {
-      return res.status(404).json({error: 'UserNotFound'});
-    }
-    else {
-      models.Blog.find({where: {id: username}}).then(function(blog){
-        user.destroy().then(function(){ 
-          // POST DEStrUction ?!?!
-          blog.destroy().then(function(){
-            return res.status(500).json({error: 'user and blog destroyed'});
-          }) 
-        }) 
-      })
-    }
-  });
-});
+// router.delete('/:username', function(req, res, next) {
+//   var username = req.params['username'];
+//   var query = {where: {username: username}, include: [{model: models.Blog, as: 'AuthoredBlogs'}]};
+//   models.User.find(query).then(function(user) {
+//     if (!user) {
+//       return res.status(404).json({error: 'UserNotFound'});
+//     }
+//     else {
+//       models.Blog.find({where: {id: username}}).then(function(blog){
+//         user.destroy().then(function(){ 
+//           // POST DEStrUction ?!?!
+//           blog.destroy().then(function(){
+//             return res.status(500).json({error: 'user and blog destroyed'});
+//           }) 
+//         }) 
+//       })
+//     }
+//   });
+// });
 
 
 router.get('/:username/blogs', function(req, res, next) {
@@ -199,7 +200,6 @@ router.get('/:username/blogs', function(req, res, next) {
   });
 });
 
-
 router.get('/:username/follows', function(req, res, next) {
   var username = req.params['username'];
   var query = {where: {username: username}, include: [{model: models.Blog, as: 'FollowedBlogs'}]};
@@ -216,80 +216,151 @@ router.get('/:username/follows', function(req, res, next) {
   });
 });
 
-router.put('/:username/follows/:id', function(req, res, next) {
+router.get('/:username/follows_posts', function(req, res, next) {
+  var username = req.params['username'];
+  var query = {
+    where: {username: username}, 
+    include: [{
+      model: models.Blog, as: 'FollowedBlogs', 
+      include:[{
+        model: models.Post, 
+        include: models.User
+      }]
+    }]
+  };
+  var result = [];
+  models.User.find(query).then(function(user) {
+    if(!user) {
+      return res.status(404).json({error: 'UserNotFound'});
+    } else {
+      user.FollowedBlogs.forEach(function(blog){
+        blog.Posts.forEach(function(post){
+          result.push({"id":post.id, "title":post.title, "author":post.User.username,
+                  "blogID":post.BlogId, "blog":blog.name, "postTime":post.createdAt });
+        })
+      })
+      return res.status(201).json(result);
+    }
+  });
+})
+
+router.put('/:username/follows/:id', passport.authenticate('basic', { session: false }), function(req, res, next) {
+  var user = req.user.username;
   var username = req.params['username'];
   var id = req.params['id'];
   var query = {where: {username: username}, include: [{model: models.Blog, as: 'FollowedBlogs'}]};
-  models.User.findOne(query).then(function(user){
-    if(!user){
-      return res.status(404).json({error: 'UserNotFound'});
-    } else {
-      models.Blog.findOne({where:{id:id}}).then(function(blog){
-        if(!blog){
-          return res.status(404).json({error: 'BlogNotFound'});
-        } else {
-          user.addFollowedBlog(blog).then(function(){
-            return res.status(201).json(user);
-          },
-          function(err){
-            return res.status(500).json({error: 'following blog by user failed'});
-          });
-        }
-      });
-    }
-  });
+  if(username == user){
+    models.User.findOne(query).then(function(user){
+      if(!user){
+        return res.status(404).json({error: 'UserNotFound'});
+      } else {
+        models.Blog.findOne({where:{id:id}}).then(function(blog){
+          if(!blog){
+            return res.status(404).json({error: 'BlogNotFound'});
+          } else {
+            user.addFollowedBlog(blog).then(function(){
+              return res.status(201).json(user);
+            },
+            function(err){
+              return res.status(500).json({error: 'following blog by user failed'});
+            });
+          }
+        });
+      }
+    });
+  } else {
+    return res.status(400).json({error: 'unauthorizedAccess'});
+  }
+  
 });
 
 
-router.delete('/:username/follows/:id', function(req, res, next) {
+router.delete('/:username/follows/:id', passport.authenticate('basic', { session: false }), function(req, res, next) {
+  var user = req.user.username;
   var username = req.params['username'];
   var id = req.params['id'];
   var query = {where: {username: username}, include: [{model: models.Blog, as: 'FollowedBlogs'}]};
-  models.User.findOne(query).then(function(user){
-    if(!user){
-      return res.status(404).json({error: 'UserNotFound'});
-    } else {
-      models.Blog.findOne({where:{id:id}}).then(function(blog){
-        if(!blog){
-          return res.status(404).json({error: 'BlogNotFound'});
-        } else {
-          user.removeFollowedBlog(blog).then(function(){
-            return res.status(201).json(user);
-          },
-          function(err){
-            return res.status(500).json({error: 'user is not following the blog'});
-          });
-        }
-      });
-    }
-  });
+  if(username == user){
+    models.User.findOne(query).then(function(user){
+      if(!user){
+        return res.status(404).json({error: 'UserNotFound'});
+      } else {
+        models.Blog.findOne({where:{id:id}}).then(function(blog){
+          if(!blog){
+            return res.status(404).json({error: 'BlogNotFound'});
+          } else {
+            user.removeFollowedBlog(blog).then(function(){
+              return res.status(201).json(user);
+            },
+            function(err){
+              return res.status(500).json({error: 'user is not following the blog'});
+            });
+          }
+        });
+      }
+    });
+  } else {
+    return res.status(400).json({error: 'unauthorizedAccess'});
+  }
+  
+});
+
+router.put('/:username/likes/:id', passport.authenticate('basic', { session: false }), function(req, res, next) {
+  var user = req.user.username;
+  var username = req.params['username'];
+  var id = req.params['id'];
+  var query = {where: {username: username}, include: [{model: models.Post, as: 'LikedPosts'}]};
+  if(username == user){
+    models.User.findOne({where:{username:username}}).then(function(user){
+      if(!user){
+        return res.status(404).json({error: 'UserNotFound'});
+      } else {
+        models.Post.findOne({where:{id:id}, include: [{model: models.User, as: 'Likes'}]}).then(function(post){
+          if(!post){
+            return res.status(404).json({error: 'PostNotFound'});
+          } else {
+            return res.status(200).end();
+            //user.addLikedPost(post).then(function(){
+            //  post.increment('likes', 1).success(function(){
+            //    return res.status(200).end();
+            //  })
+            //})
+          }
+        });
+      }
+    });
+  } else {
+    return res.status(403).end();
+  }
+});
+
+router.delete('/:username/likes/:id', passport.authenticate('basic', { session: false }), function(req, res, next) {
+  var user = req.user.username;
+  var username = req.params['username'];
+  var id = req.params['id'];
+  var query = {where: {username: username}, include: [{model: models.Post, as: 'LikedPosts'}]};
+  if(username == user){
+    models.User.findOne({where:{username:username}}).then(function(user){
+      if(!user){
+        return res.status(404).json({error: 'UserNotFound'});
+      } else {
+        models.Post.findOne({where:{id:id}}).then(function(post){
+          if(!post){
+            return res.status(404).json({error: 'PostNotFound'});
+          } else {
+            user.removeLikedPost(post).then(function(){
+              post.decrement('likes', 1);
+              return res.status(200).end();
+            })
+          }
+        });
+      }
+    });
+  }
 });
 
 /*
-router.put('/:username/likes/:id', function(req, res, next) {
-  var username = req.params['username'];
-  var id = req.params['id'];
-  models.User.findOne({where:{username:username}}).then(function(user){
-    if(!user){
-      return res.status(404).json({error: 'UserNotFound'});
-    } else {
-      models.Post.findOne({where:{id:id}}).then(function(post){
-        if(!post){
-          return res.status(404).json({error: 'BlogNotFound'});
-        } else {
-          var index = user.likes.indexOf(id);
-          if(index == -1){
-            user.likes.push(id);
-            post.increment('likes', 1);
-            return res.status(200).end();
-          } 
-        }
-      });
-    }
-  });
-});
-
-router.delete('/:username/likes/:id', function(req, res, next) {
+router.delete('/:username/likes/:id', passport.authenticate('basic', { session: false }), function(req, res, next) {
   var username = req.params['username'];
   var id = req.params['id'];
   models.User.findOne({where:{username:username}}).then(function(user){

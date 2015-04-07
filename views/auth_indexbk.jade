@@ -1,0 +1,75 @@
+doctype html
+html(lang="en")
+  include head.jade
+  body
+    .container
+      include auth_navigation.jade
+
+    script.
+      $(document).ready(function(){
+        var post_data;
+        $.get("/api/user/#{user.username}/follows_posts", function(data){
+          if(data.length === 0){
+            post_data = "<p> You have not followed any blogs </p>";
+            $(post_data).appendTo("#result");
+          } else {
+            for(var i = 0; i < data.length; i++){
+              var date = data[i].postTime;
+              date = date.split("T",1)
+              post_data = "<div class=\"post text-justify\"><a href=\"/post/"+data[i].id+"\"><h3>"
+                +data[i].title+" - Posted on: "+date+"</h3></a><footer>Posted by - "+data[i].author+" in blog \""
+                +data[i].blog+"\"</footer></div>";
+              $(post_data).appendTo("#result");
+            }
+          }
+        });
+      });
+
+    .jumbotron(style="margin-top:60px")
+      .container
+        h1 Welcome to Tamplr.
+        p Have fun blogging! #{user.username}
+
+
+    .bloglist
+      .container
+        h1 Latests posts in followed blogs
+        #result
+        //- each post in posts
+        //-   div.post.text-justify
+        //-     a(href="/post/" + post.id)
+        //-       h3
+        //-         = post.title
+        //-     footer Posted by - 
+        //-       = post.author
+        //-       |  in blog "
+        //-       = post.blog
+        //-       | "
+        //- each post in posts
+        //-   div.post.text-justify
+        //-     a(href="/post/" + post.id)
+        //-       h3
+        //-         = post.title
+        //-     footer Posted by - 
+        //-       = post.author
+        //-       |  in blog "
+        //-       = post.blog
+        //-       | "
+        //- p Tamplr:ssa on #{users.length} käyttäjää.
+        //- ul
+        //- - for(var i=0; i < users.length; i++){
+        //-   - var u = users[i]; 
+        //-   li
+        //-     a(href="/api/user/#{u.username}")= u.username
+        //- - }
+        //- p.
+        //-   Voit lisätä uuden käyttäjän seuraavanlaisella
+        //-   <a href="http://curl.haxx.se/"> curl</a>-komennolla:
+        //- pre. 
+        //-   curl -X POST http://#{host}/api/user -H 'Content-Type: application/json' -d '{"username": "teemu"}'
+        //- p.
+        //-   Windowsissa pitää käyttää vähän ylimääräisiä kenoviivoja:
+        //- pre. 
+        //-   curl -X POST http://#{host}/api/user -H 'Content-Type: application/json' -d '{\"username\": \"teemu\"}'
+        //- p.
+        //-   Click here to  <a href='/login'> LOGIN </a>

@@ -1,22 +1,31 @@
-var auth = require('basic-auth');
-var models = require('../models');
-
+/*
+var basicAuth = require('basic-auth');
+var models = require('./models');
 
 module.exports = function(req, res, next){
-  var user = auth(req);
-  models.User.findAll().success(function(userlist) {
-  	for(var i=0;i<userlist.length;i++){
-    	if (!user || user.name !== userlist[i].username || user.password !== userlist[i].password) {
-		    res.set('WWW-Authenticate', 'Basic realm="example"');
-		    return res.status(401).send();
-		  }
-  	}
-  });
+  function unauthorized(res){
+      res.set('WWW-Authenticate', 'Basic realm=tamplr');
+      return res.status(401).json({error: 'Unauthorized Access'});
+  };
+  var user = basicAuth(req);
+  if(!user || !user.name || !user.pass){
+    return unauthorized(res);
+  } else {
+    models.User.find({where:{username:user.name}}).then(function(data){
+      if(!data){
+        return unauthorized(res);
+      } else {
+        if(user.name === data.username && user.pass === data.password){
+          return next();
+        } else {
+          return unauthorized(res);
+        }
+      }
+    },
+    function(err){
+      return unauthorized(res);
+    });
+  }
+};*/
 
-/*
-  if (!user || !users[user.name] || users[user.name].password !== user.pass) {
-    res.set('WWW-Authenticate', 'Basic realm="example"');
-    return res.status(401).send();
-  }*/
-  return next();
-};
+

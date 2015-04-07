@@ -4,11 +4,17 @@ module.exports = function(sequelize, DataTypes) {
   var Post = sequelize.define("Post", {
     title: DataTypes.STRING,
     text: DataTypes.TEXT,
-    author: DataTypes.STRING, // poster
-    likes: { type: DataTypes.INTEGER, defaultValue: 0 } // amount of likes
   }, {
     classMethods: {
       associate: function(models) {
+        Post.belongsTo(models.Blog);
+        Post.belongsTo(models.User);
+        Post.hasMany(models.Comment);
+
+        //Post.belongsToMany(models.Blog, {as: 'Likers', through: 'likedpost_likers'});
+
+        Post.belongsToMany(models.User, { as: 'Likes', through: 'likes_likedposts' });
+
         /*Post.belongsTo(models.Blog);
         Post.belongsTo(models.DefBlog);
         Post.hasMany(models.Comment, { onDelete: 'CASCADE'});

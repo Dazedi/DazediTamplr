@@ -1,0 +1,105 @@
+doctype html
+html(lang="en")
+  include head.jade
+  body
+    .container
+      - if (user)
+        include auth_navigation
+      - else
+        include navigation 
+
+    script.
+      $(document).ready(function(){
+        var author, title, text, likes, comments, result;
+        $.get("/api/blog/#{id}/posts", function(posts){
+          if(posts === undefined || posts.length == 0){
+            result = "<div class=\"post text-justify\"><p>There are no posts in the blog</p></div>";
+            $(result).appendTo(".bloglist");
+          } else {
+            posts.forEach(function(post){
+              result = "";
+              author = "<a href=\"/api/user/\""+post.author+"\"><p>"+post.author+"</p></a>";
+              title = "<a href=\"/post/"+post.id+"\"><p>"+post.title+"</p></a>";
+              if(post.text.length > 100){
+                text = "<p>"+post.text.substring(0,100)+"...</p>";
+              } else {
+                text = "<p>"+post.text+"</p>";
+              }
+              result = "<div class=\"post text-justify\">"+title+text+"<p id=\"info"+post.id+"\"></p></div>";
+              $(result).prependTo(".bloglist");
+
+              $.get("/api/post/"+post.id+"/commentCount", function(comment){
+                comments = "<p>Comments: "+comment.commentCount+" ";
+                $.get("/api/post/"+post.id, function(postlikes){
+                  likes = "Likes: "+postlikes.likes+" </p>";
+                  $(comments+likes).prependTo("#info"+post.id);
+                })
+              })
+              //comments = "<p>/api/post/"+post.id+"/commentCount</p>";
+              
+            })
+          }
+        });
+        
+        $.get("/api/blog/#{id}", function(blog){
+          $("<h4>"+blog.name+"</h4>").prependTo(".user");
+        })
+      });
+
+    - if(user)
+      script.
+        $.get("/api/blog/#{id}/authors", function(authors){
+          var authorlist = [];
+          authors.forEach(function(author){
+            authorlist.push(author.username);
+          });
+          var user = "#{user.username}";
+          var author = JSON.stringify(authors);
+          if(authorlist.indexOf(user) > -1){
+            //var sidebar = "<button class=\"btn btn-default\" id=\"toggleNewPost\" type=\"button\"> New Post </button>";
+            var sidebar = "<form><input type=\"button\" class=\"btn btn-default toggleNewPost\""
+              +"id=\"toggleNewPost\" "
+              +"value=\"Toggle form\"></form>"
+          } else {
+            var sidebar = "<p>Mlem "+user+"</p>";
+            // button = "<FORM METHOD=\"LINK\" ACTION=\"page1.htm\"><INPUT TYPE=\"submit\"";
+            //button += "VALUE=\"Clickable Button\"></FORM>";
+          }
+          $("<div class=\"post text-justify\">"+sidebar+"</div>").appendTo(".user");
+        });
+    - else 
+      script.
+        $.get("/api/blog/#{id}/authors", function(authors){
+          var sidebar = "<p>Login to do stuff</p>";
+          $("<div class=\"post text-justify\">"+sidebar+"</div>").appendTo(".user");
+        })
+
+    .container
+      .row
+        .col-xs-3.user#sidebar
+          .login.hidden#newPostForm
+            form.form-horizontal(id='newPostForm', method='POST', action='/api/blog/#{id}/posts')
+              legend <h2> New Post </h2>
+                .form-group
+                  label(for="InputTitle", class="col-sm-2 control-label") Title:
+                  .col-sm-6
+                    input(class="form-control", id="InputTitle", placeholder="Enter title", type='text', 
+                      name='title', required)
+                .form-group
+                  label(for="InputText", class="col-sm-2 control-label") Text:
+                  .col-sm-6
+                    textarea.form-control(class="form-control" id="InputText", placeholder="Enter text", type='text', 
+                      name='text', required)
+                .form-group
+                  .col-sm-offset-2.col-sm-10
+                    input.btn.btn-default(type='submit', value='Submit')
+
+        .col-xs-6.bloglist#middle
+          //#post
+          //.post.text-justify
+            #title
+            #post
+            #likes
+        .col-xs-3.onlineUsers
+          p harhar
+    
