@@ -15,9 +15,7 @@ router.post('/', passport.authenticate('basic', { session: false }), function(re
   models.Blog.max('id', {where: {id: { $lt: 'a'}}}).then(function(blogid){ //Ebin purkkaratkaisu
   	if(!blogid){
   		idnum = 1;
-  		//return res.status(201).json(idnum);
   	} else {
-  		//return res.status(201).json(blogid);
   		idnum = parseInt(blogid)+1;
   	}
 		models.Blog.create({ 
@@ -27,7 +25,7 @@ router.post('/', passport.authenticate('basic', { session: false }), function(re
 		  var username = req.user.username;
 		  models.User.find({where:{username:username}}).then(function(user){
 		  	user.addAuthoredBlog(blog).then(function(){
-		  		return res.status(201).json(blog.id);
+		  		return res.status(201).json({"id":blog.id});
 		  	})
 		 	})
 		})
@@ -52,23 +50,55 @@ router.get('/:id', function(req, res, next) {
 router.delete('/:id', passport.authenticate('basic', { session: false }), function(req, res, next) {
   var id = req.params['id'];
   var query = {where: {id: id}, include: [{model: models.User, as: 'Authors'}]};
-  models.Blog.findOne({where: {id: id}}).then(function(blog) {
+  var theBlog;
+  var authorlist = [];
+  models.Blog.findOne(query).then(function(blog){
+    if(blog){
+      if(!parseInt(id)){
+        return res.status(403).json({error: 'Default blog cannot be deleted'});
+      } else {
+        theBlog = blog;
+        blog.Authors.forEach(function(author){
+          authorlist.push(author.username);
+        });
+        return blog.setAuthors([]);
+      }
+    } else {
+      return res.status(404).json({error: 'Blog Not Found'});
+    }
+  }).then(function(){
+    if(authorlist.indexOf(req.user.username) > -1){
+      return theBlog.destroy();
+    } else {
+      return res.status(400).json({error: 'unauthorizedAccess'})
+    }
+  }).then(function(){
+    return res.end();
+  })
+
+  /*models.Blog.findOne(query).then(function(blog) {
     if (!blog) {
-      return res.status(404).json({error: 'BlogNotFound'});
+      
     }
     else {
-      models.Authors.find({where:{username: req.user.username}}).then(function(){
-        // see if user is in authors
-      // destroying blog _should_ cascade and destroy all posts 
-      // and deal with associations
-        blog.destroy().complete(function(){
-          return res.status(200).end();
+      //var result = $.grep(blog.Authors, function(e){ return e.username == req.body.username; });
+      var authorlist = [];
+      blog.Authors.forEach(function(author){
+        authorlist.push(author.username);
+      });
+      if(authorlist.indexOf(req.user.username) > -1){
+        var theBlog = blog;
+        models.Blog.destroy({where: {name: blog.name}}).then(function(){
+          return res.status(200).json(blog)
         });
-      }, function(err){
-        return res.status(400).json({error: 'unauthorizedAccess'});
-      })
+        //blog.setAuthors([]).then(function(){
+          
+        //})
+      } else {
+        return res.status(400).json({error: 'unauthorizedAccess'})
+      }
     }
-  });
+  });*/
 });
 
 router.get('/:id/authors', function(req, res, next) {
@@ -88,14 +118,49 @@ router.put('/:id/author/:username', passport.authenticate('basic', { session: fa
   var id = req.params['id'];
   var username = req.params['username'];
   var query = {where: {id: id}, include: [{model: models.User, as: 'Authors'}]};
-  models.Blog.findOne(query).then( function(blog) {
+  var theBlog;
+  var authorlist = [];
+  models.Blog.findOne(query).then(function(blog){
+    if(blog){
+      if(!parseInt(id)){
+        return res.status(403).json({error: 'Default blog authors cannot be changed'});
+      } else {
+        theBlog = blog;
+        blog.Authors.forEach(function(author){
+          authorlist.push(author.username);
+        });
+        //return blog.addAuthor([]);
+      }
+    } else {
+      return res.status(404).json({error: 'Blog Not Found'});
+    }
+  }).then(function(){
+    if(authorlist.indexOf(req.user.username) > -1){
+      models.User.find({where:{username:username}}).then(function(userToAdd){
+        if(userToAdd){
+          theBlog.addAuthor(userToAdd).then(function(){
+            return res.status(200);
+          })
+        } else {
+          return res.status(404).json({error: 'User not found'});
+        }
+      })
+    } else {
+      return res.status(403).json({error: 'unauthorizedAccess'})
+    }
+  }).then(function(){
+    return res.end();
+  })
+
+
+  /*models.Blog.findOne(query).then( function(blog) {
     if(!blog){
       return res.status(404).json({error: 'BlogNotFound'});
     } else {
     	if(!parseInt(id)){
     		return res.status(403).json({error: 'Unable to change authors'});
     	} else {
-        blog.Authors.find(req.user.usename).success(function(){
+        blog.Authors.find(req.user.username).success(function(){
   	  		var result = [];
   	  		blog.Authors.forEach(function(user){
   	  			result.push({username:user.username});
@@ -121,7 +186,7 @@ router.put('/:id/author/:username', passport.authenticate('basic', { session: fa
         })
   		}
     }
-  });
+  });*/
 });
 
 // // add DELETE /:id/author/:username HERE
@@ -240,7 +305,7 @@ router.post('/:id/posts', passport.authenticate('basic', { session: false }), fu
         }
       }
       if(!found){
-        return res.status(404).json({error:'unauthorizedAccess'});
+        return res.status(403).json({error:'unauthorizedAccess'});
       } else {
       	models.User.find({where: {username: username}}).then(function(user){
       		models.Post.create({
@@ -249,7 +314,7 @@ router.post('/:id/posts', passport.authenticate('basic', { session: false }), fu
   	    	}).then(function(post){
   	    		blog.addPost(post).then(function(){
   	    			user.addPost(post).then(function(){
-  	    				return res.status(201).json(post.id);
+  	    				return res.status(201).json({"id":post.id});
   	    			})
   	    		})
   	    	})
@@ -257,6 +322,15 @@ router.post('/:id/posts', passport.authenticate('basic', { session: false }), fu
       }
     }
   })
+});
+
+// GET /api/blog/:id/followers
+// Returns 200 and followers of the blog
+router.get('/:id/followers', function(req, res, next){
+  var id = req.params['id'];
+  models.Blog.find({where:{id:id}, include: [{model: models.User, as: 'Followers'}]}).then(function(blog){
+    return res.status(200).json(blog.Followers);
+  });
 });
 
 module.exports = router;

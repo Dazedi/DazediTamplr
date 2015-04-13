@@ -10,19 +10,19 @@ var passport = require('passport');
 // Works also with:
 // curl -X POST http://myappv2.herokuapp.com/api/user
 // -H 'Content-Type: application/json' 
-// -d '{"username": "username", "realname": "realname", "password": "pw"}'
+// -d '{"username": "username", "name": "name", "password": "pw"}'
 
 router.post('/', function(req, res, next) {
 
   // TODO
 
   var username = req.body.username;
-  var realname = req.body.realname;
+  var name = req.body.name;
   var password = req.body.password;
   if (!username) {
     return res.status(400).json({error: 'InvalidUserName'});
-  } else if (!realname) {
-    return res.status(400).json({error: 'InvalidRealName'});
+  } else if (!name) {
+    return res.status(400).json({error: 'Invalidname'});
   } else if (!password) {
     return res.status(400).json({error: 'InvalidPassword'});
   }
@@ -34,7 +34,7 @@ router.post('/', function(req, res, next) {
     } else {
       models.User.create({
         username: username,
-        realname: realname,
+        name: name,
         password: password
       }).then(function(user) {
         var defblog = username + "'s default blog.";
@@ -66,13 +66,13 @@ router.post('/', function(req, res, next) {
 // Works also with:
 // curl -X GET http://myappv2.herokuapp.com/api/user/:username
 // prints out as:
-// {"username": "username", "realname": "realname"}
+// {"username": "username", "name": "name"}
 router.get('/:username', function(req, res, next) {
   var username = req.params['username']; 
   var query = {where: {username: username}};
   models.User.findOne(query).then(function(user) {
     if (user) {
-      var result = { username: user.username, realname: user.realname};
+      var result = { username: user.username, name: user.name};
       return res.json(result);
     }
     else {
@@ -96,10 +96,10 @@ router.put('/:username', passport.authenticate('basic', { session: false }), fun
   if(req.user.username != username){
     return res.status(400).json({error: 'Unauthorized access'});
   }
-  var realname = req.body.realname;
+  var name = req.body.name;
   var password = req.body.password;
-  if (!realname && !password) {
-    return res.status(400).json({error: 'InvalidRealName or Password'});
+  if (!name && !password) {
+    return res.status(400).json({error: 'Invalidname or Password'});
   }
 
   var query = {where: {username: username}};
@@ -107,25 +107,25 @@ router.put('/:username', passport.authenticate('basic', { session: false }), fun
     if(!user) {
       return res.status(409).json({error: 'UserNotFound'});
     } else {
-      // Realname is empty => update password
-      if(!realname) {
+      // name is empty => update password
+      if(!name) {
         models.User.update({ password: password },query).then(function(user) {
           return res.status(200).json({error: 'ok'});
         },
         function(err) {
           return res.status(500).json({error: 'ServerError'});
         });
-      // Password is empty => update realname
+      // Password is empty => update name
       } else if(!password) {
-        models.User.update({ realname: realname },query).then(function(user) {
+        models.User.update({ name: name },query).then(function(user) {
           return res.status(200).json({error: 'ok'});
         },
         function(err) {
           return res.status(500).json({error: 'ServerError'});
         });
-      // Update realname and password
+      // Update name and password
       } else {
-        models.User.update({ realname: realname, password: password },query).then(function(user) {
+        models.User.update({ name: name, password: password },query).then(function(user) {
           return res.status(200).json({error: 'ok'});
         },
         function(err) {
@@ -259,7 +259,7 @@ router.put('/:username/follows/:id', passport.authenticate('basic', { session: f
             return res.status(404).json({error: 'BlogNotFound'});
           } else {
             user.addFollowedBlog(blog).then(function(){
-              return res.status(201).json(user);
+              return res.status(200).end();
             },
             function(err){
               return res.status(500).json({error: 'following blog by user failed'});
@@ -269,7 +269,7 @@ router.put('/:username/follows/:id', passport.authenticate('basic', { session: f
       }
     });
   } else {
-    return res.status(400).json({error: 'unauthorizedAccess'});
+    return res.status(403).json({error: 'unauthorizedAccess'});
   }
   
 });
@@ -300,7 +300,7 @@ router.delete('/:username/follows/:id', passport.authenticate('basic', { session
       }
     });
   } else {
-    return res.status(400).json({error: 'unauthorizedAccess'});
+    return res.status(403).json({error: 'unauthorizedAccess'});
   }
   
 });
@@ -309,28 +309,23 @@ router.put('/:username/likes/:id', passport.authenticate('basic', { session: fal
   var user = req.user.username;
   var username = req.params['username'];
   var id = req.params['id'];
-  var query = {where: {username: username}, include: [{model: models.Post, as: 'LikedPosts'}]};
-  if(username == user){
-    models.User.findOne({where:{username:username}}).then(function(user){
+  if(user == username){
+    models.User.find({where:{username:username}}).then(function(user){
       if(!user){
-        return res.status(404).json({error: 'UserNotFound'});
+        return res.status(404).json({error:'User Not Found'});
       } else {
-        models.Post.findOne({where:{id:id}, include: [{model: models.User, as: 'Likes'}]}).then(function(post){
+        models.Post.find({where:{id:id}, include: [{model: models.User, as: 'Likes'}]}).then(function(post){
           if(!post){
-            return res.status(404).json({error: 'PostNotFound'});
+            return res.status(404).json({error:'Post Not Found'});
           } else {
+            post.addLike(user);
             return res.status(200).end();
-            //user.addLikedPost(post).then(function(){
-            //  post.increment('likes', 1).success(function(){
-            //    return res.status(200).end();
-            //  })
-            //})
           }
-        });
+        })
       }
-    });
+    })
   } else {
-    return res.status(403).end();
+    return res.status(403).json({error: 'unauthorizedAccess'});
   }
 });
 

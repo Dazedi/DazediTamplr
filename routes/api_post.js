@@ -2,7 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 var models = require('../models');
-
+var auth = require('../auth');
+var passport = require('passport');
 /*
 /api/user/:username/likes/:id
 function getLikes(id){
@@ -23,12 +24,12 @@ router.get('/:id', function(req, res, next) {
   });
 });
 
-router.post('/:id/comments', function(req, res, next) {
+router.post('/:id/comments', passport.authenticate('basic', { session: false }), function(req, res, next) {
   var id = req.params['id'];
   var text = req.body.text;
   var result;
   //TEMPORARY USER
-  var username = 'teemu';
+  var username = req.user.username;
 
   if (!text) {
     return res.status(400).json({error: 'InvalidText'});
@@ -38,10 +39,11 @@ router.post('/:id/comments', function(req, res, next) {
     	result = {error: 'PostNotFound'};
     } else {
     	models.User.find({where: {username: username}}).then(function(user){
+        //return res.status(400).json(user);
     		models.Comment.create({text: text}).then(function(comment){
     			post.addComment(comment).then(function(){
     				user.addComment(comment).then(function(){
-    					return res.status(200).json(comment.id);
+    					return res.status(201).json({"id":comment.id});
     				})
     			})
     		})
@@ -53,21 +55,23 @@ router.post('/:id/comments', function(req, res, next) {
 
 router.get('/:id/comments', function(req, res, next) {
 	var id = req.params['id'];
-	var result = [];
-	models.Post.find({where: {id: id}, include: [{model: models.Comment, include: [models.User]} ]}).then(function(post){
-		if(!post){
-			return res.status(404).json({error: 'PostNotFound'});
-		} else {
-			for(var i=post.Comments.length-1; i>=post.Comments.length-10; i--){
-    		result.push({"id":post.Comments[i].id, "text":post.Comments[i].text, "author":post.Comments[i].User.username});
-    		if(i == 0){
-           break;
-         }
-    	};
-    	result.reverse();
-    	return res.status(200).json(result);
-		}
-	});
+  var result = [];
+  models.Post.find({where:{id:id}}).then(function(post){
+    if(!post){
+      return res.status(404).json({error:"Post does not exist"});
+    } else {
+      models.Comment.findAll({include: [{model: models.User},{model: models.Post, where:{id:id}}]}).then(function(comments){
+        if(comments.length === 0){
+          return res.status(200).json(result);
+        }
+        for(var i = comments.length-1; i>=comments.length-10; i--){
+          result.push({"id":comments[i].id, "text":comments[i].text, "author":comments[i].User.username});
+          if(i == 0) break;
+        }
+        return res.status(200).json(result);
+      });
+    }
+  })
 });
 
 router.get('/:id/commentCount', function(req, res, next) {

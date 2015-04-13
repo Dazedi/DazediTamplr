@@ -6,7 +6,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING,
       validate: { is: /^[a-z][a-z0-9_]*/i }
     },
-    realname: DataTypes.STRING,
+    name: DataTypes.STRING,
     password: DataTypes.STRING,
     //likes: DataTypes.ARRAY(DataTypes.STRING), //post likes
     //follows: DataTypes.ARRAY(DataTypes.STRING)//blog follows
