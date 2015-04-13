@@ -22,7 +22,7 @@ function connectToDatabase() {
 
   //var url = process.env.DATABASE_URL;
   //var url = 'postgres://postgres:postgrespw@localhost:5432/postgres';
-  var url = 'HEROKU_POSTGRESQL_WHITE';
+  var url = process.env.HEROKU_POSTGRESQL_WHITE;
   if (url) {
     return connectToPostgres(url);
   }
