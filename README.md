@@ -1,5 +1,9 @@
-# MY PRIVATE WEBSITE (works as a portfolio etc)
-Below extra information on how I can do stuff. I took the base program of the school exercise I have and built it on top of that. The base is pretty much only dependencies and modules attached properly to each other - I messed up with them for the whole day without success, so I took this to learn from it. Switched from ESJ to JADE though.
+# Blogging service Dazeditamplr
+Wrote this as a web programming course assignment. 
+Running version can be found on http://dazeditamplr.herokuapp.com
+
+
+
 
 ## Sovelluksen käynnistys
 
